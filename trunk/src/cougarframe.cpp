@@ -53,6 +53,7 @@ void CougarFrame::OnOpen(wxCommandEvent& event)
     if(dlg.ShowModal() == wxID_OK) {
         wxString filename = dlg.GetPath();    
         m_cadmodel.open(filename);
+        m_modelCanvas->Refresh();
     }
 }
 
@@ -76,14 +77,14 @@ wxSplitterWindow* CougarFrame::createSplitter()
     
     // model canvas
     wxPanel *panel1 = new wxPanel(splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER);
-    Modelcanvas *modelcanvas = new Modelcanvas(splitter, &m_cadmodel);
+    m_modelCanvas = new Modelcanvas(panel1, &m_cadmodel);
     wxBoxSizer *box = new wxBoxSizer(wxVERTICAL);
-    box->Add(modelcanvas, 1, wxEXPAND);
+    box->Add(m_modelCanvas, 1, wxEXPAND);
     panel1->SetSizer(box);
 
     wxPanel *panel2 = new wxPanel(splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER);
     splitter->Initialize(panel1);
     splitter->SplitVertically(panel1, panel2, 300);
-    splitter->SetMinimumPaneSize(20);
+    splitter->SetMinimumPaneSize(10);
     return splitter;
 }

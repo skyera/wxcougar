@@ -5,6 +5,8 @@
 #include <wx/splitter.h>
 #include "cadmodel.h"
 
+class Modelcanvas;
+
 class CougarFrame: public wxFrame
 {
 public:
@@ -20,6 +22,7 @@ private:
 
     //
     Cadmodel m_cadmodel;
+    Modelcanvas* m_modelCanvas;
 };
 
 #endif

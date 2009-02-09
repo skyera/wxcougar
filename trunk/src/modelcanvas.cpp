@@ -21,6 +21,9 @@ Modelcanvas::Modelcanvas(wxWindow* parent, Cadmodel *cadmodel):wxGLCanvas(parent
 void Modelcanvas::OnPaint(wxPaintEvent& event)
 {
     wxPaintDC dc(this);
+    if(!GetContext()) {
+        return;
+    }
     SetCurrent();
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT);    
 
@@ -30,6 +33,7 @@ void Modelcanvas::OnPaint(wxPaintEvent& event)
         init = true;
     }
     showModel();
+    glFlush();
     SwapBuffers();
 }
 
@@ -67,10 +71,11 @@ void Modelcanvas::setupProjection()
         bottom = -half;
         top = half;
     } 
-
-    double near = 0;
-    double far = diameter * 4;
-    glOrtho(left, right, bottom, top, near, far);
+    
+    //double near = 0.0;
+    //double far = diameter * 4;
+    //glOrtho(left, right, bottom, top, near, far);
+    glOrtho(left, right, bottom, top, 0.0, diameter * 4);
 }
 
 void Modelcanvas::showModel()
