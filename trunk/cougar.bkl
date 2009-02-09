@@ -1,0 +1,20 @@
+<?xml version="1.0" ?>
+<makefile>
+    <include file="presets/wx.bkl"/>
+    <exe id="cougar" template="wx">
+        <include>include</include>
+        <app-type>gui</app-type>
+        <sources> src/cougarapp.cpp </sources>
+        <sources> src/cougarframe.cpp </sources>
+        <sources> src/cadmodel.cpp </sources>
+        <sources> src/facet.cpp </sources>
+        <sources> src/point.cpp </sources>
+        <sources> src/controlpanel.cpp </sources>
+        <sources> src/modelcanvas.cpp </sources>
+
+        <wx-lib> gl </wx-lib>
+        <wx-lib> adv </wx-lib>
+        <wx-lib> core </wx-lib>
+        <wx-lib> base </wx-lib>
+    </exe>
+</makefile>
