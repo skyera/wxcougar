@@ -13,8 +13,9 @@ class Cadmodel
 {
 public:
     Cadmodel();
-    bool open(const wxString& filename);
     virtual ~Cadmodel();
+    
+    bool open(const wxString& filename);
     
     int createGLModellist();
     bool getSolidline(wxTextFile& file);
