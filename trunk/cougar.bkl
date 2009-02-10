@@ -11,6 +11,7 @@
         <sources> src/point.cpp </sources>
         <sources> src/controlpanel.cpp </sources>
         <sources> src/modelcanvas.cpp </sources>
+        <sources> src/paradialog.cpp </sources>
 
         <wx-lib> gl </wx-lib>
         <wx-lib> adv </wx-lib>
