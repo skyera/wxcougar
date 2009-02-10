@@ -17,6 +17,7 @@ private:
     void createMenu();
     void createControls();
     wxSplitterWindow* createSplitter();
+    void createToolbar();
     
     DECLARE_EVENT_TABLE()
 

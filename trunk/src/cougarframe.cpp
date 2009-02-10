@@ -4,6 +4,7 @@
 #include <string>
 #include <wx/splitter.h>
 #include "modelcanvas.h"
+#include <wx/artprov.h>
 
 using namespace std;
 
@@ -16,6 +17,7 @@ CougarFrame::CougarFrame(const wxString& title):
     wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(800, 600))
 {
     createMenu();
+    createToolbar();
     createControls();
     Centre();
 }
@@ -87,4 +89,26 @@ wxSplitterWindow* CougarFrame::createSplitter()
     splitter->SplitVertically(panel1, panel2, 300);
     splitter->SetMinimumPaneSize(10);
     return splitter;
+}
+
+void CougarFrame::createToolbar()
+{
+    wxToolBar *toolbar = CreateToolBar();
+    wxBitmap open_bmp = wxArtProvider::GetBitmap(wxART_FILE_OPEN);
+    wxBitmap slice_bmp = wxArtProvider::GetBitmap(wxART_CDROM);
+    wxBitmap save_bmp = wxArtProvider::GetBitmap(wxART_FILE_SAVE);
+    wxBitmap next_bmp = wxArtProvider::GetBitmap(wxART_GO_DOWN);
+    wxBitmap prev_bmp = wxArtProvider::GetBitmap(wxART_GO_UP);
+    wxBitmap help_bmp = wxArtProvider::GetBitmap(wxART_HELP);
+    wxBitmap quit_bmp = wxArtProvider::GetBitmap(wxART_QUIT);
+    
+    toolbar->AddTool(wxID_OPEN, wxT("open"), open_bmp);
+    toolbar->AddTool(ID_SLICE, wxT("slice"), slice_bmp);
+    toolbar->AddTool(wxID_SAVE, wxT("save"), save_bmp);
+    toolbar->AddTool(ID_NEXT, wxT("next layer"), next_bmp);
+    toolbar->AddTool(ID_PREV, wxT("prev layer"), prev_bmp);
+    toolbar->AddTool(wxID_ABOUT, wxT("about"), help_bmp);
+    toolbar->AddTool(wxID_EXIT, wxT("quit"), quit_bmp);
+
+    toolbar->Realize();
 }
