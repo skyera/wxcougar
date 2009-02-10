@@ -14,6 +14,7 @@ public:
 
 private:
     void OnOpen(wxCommandEvent& event);
+    void OnSlice(wxCommandEvent& event);
     void createMenu();
     void createControls();
     wxSplitterWindow* createSplitter();

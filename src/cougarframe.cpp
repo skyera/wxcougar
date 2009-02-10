@@ -5,14 +5,17 @@
 #include <wx/splitter.h>
 #include "modelcanvas.h"
 #include <wx/artprov.h>
+#include "paradialog.h"
 
 using namespace std;
 
+enum { ID_SLICE = 2000, ID_NEXT, ID_PREV};
+
 BEGIN_EVENT_TABLE(CougarFrame, wxFrame)
     EVT_MENU(wxID_OPEN, CougarFrame::OnOpen)
+    EVT_MENU(ID_SLICE, CougarFrame::OnSlice)
 END_EVENT_TABLE()
 
-enum { ID_SLICE = 2000, ID_NEXT, ID_PREV};
 CougarFrame::CougarFrame(const wxString& title):
     wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(800, 600))
 {
@@ -32,6 +35,8 @@ void CougarFrame::createMenu()
     filemenu->Append(wxID_OPEN, wxT("&Open\tCtrl+O"), wxT("Open file"));
     filemenu->Append(ID_SLICE, wxT("S&lice\tCtrl+L"), wxT("Slice file"));
     filemenu->Append(wxID_SAVE, wxT("&Save\tCtrl+S"), wxT("Save slice info"));
+    filemenu->AppendSeparator();
+    filemenu->Append(wxID_EXIT, wxT("E&xit\tCtrl+Q"), wxT("Quit application"));
     menubar->Append(filemenu, wxT("&File"));
     
     // Edit
@@ -111,4 +116,10 @@ void CougarFrame::createToolbar()
     toolbar->AddTool(wxID_EXIT, wxT("quit"), quit_bmp);
 
     toolbar->Realize();
+}
+
+void CougarFrame::OnSlice(wxCommandEvent& event)
+{
+    ParaDialog dlg(this, -1, wxT("slice parameters"));
+    dlg.ShowModal();
 }
