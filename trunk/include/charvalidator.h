@@ -12,6 +12,9 @@ public:
     bool Validate(wxWindow* parent);
     bool TransferFromWindow();
     bool TransferToWindow();
+    void OnChar(wxKeyEvent& event);
+
+    DECLARE_EVENT_TABLE()
 private:
     wxString m_key;
     std::map<wxString, wxString>& m_paraMap;
