@@ -46,7 +46,8 @@ COUGAR_OBJECTS =  \
 	cougar_point.o \
 	cougar_controlpanel.o \
 	cougar_modelcanvas.o \
-	cougar_paradialog.o
+	cougar_paradialog.o \
+	cougar_charvalidator.o
 
 ### Conditionally set variables: ###
 
@@ -90,6 +91,9 @@ cougar_modelcanvas.o: ./src/modelcanvas.cpp
 	$(CXX) -c -o $@ $(COUGAR_CXXFLAGS) $(CPPDEPS) $<
 
 cougar_paradialog.o: ./src/paradialog.cpp
+	$(CXX) -c -o $@ $(COUGAR_CXXFLAGS) $(CPPDEPS) $<
+
+cougar_charvalidator.o: ./src/charvalidator.cpp
 	$(CXX) -c -o $@ $(COUGAR_CXXFLAGS) $(CPPDEPS) $<
 
 .PHONY: all install uninstall clean
