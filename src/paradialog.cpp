@@ -31,9 +31,9 @@ void ParaDialog::createControls()
             strs.Add(wxT("-Y"));
             strs.Add(wxT("+Z"));
             strs.Add(wxT("-Z"));
-            wxChoice *choice = new wxChoice(this, -1, wxDefaultPosition, wxDefaultSize, strs);             
-            choice->SetStringSelection(val);
-            flex->Add(choice);
+            m_choice = new wxChoice(this, -1, wxDefaultPosition, wxDefaultSize, strs);             
+            m_choice->SetStringSelection(val);
+            flex->Add(m_choice);
         } else {
             wxTextCtrl *txtCtrl = new wxTextCtrl(this, -1, val, wxDefaultPosition, wxSize(80, -1)); 
             flex->Add(txtCtrl);
@@ -57,4 +57,9 @@ void ParaDialog::createControls()
 
     SetSizer(sizer);
     sizer->Fit(this);
+}
+
+wxString ParaDialog::getDirection()
+{
+    return m_choice->GetStringSelection();
 }

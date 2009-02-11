@@ -129,5 +129,22 @@ void CougarFrame::createToolbar()
 void CougarFrame::OnSlice(wxCommandEvent& event)
 {
     ParaDialog dlg(this, -1, wxT("slice parameters"), m_paraMap);
-    dlg.ShowModal();
+    if(dlg.ShowModal() == wxID_OK) {
+        wxString dir = dlg.getDirection();
+        m_paraMap[wxT("direction")] = dir;
+        
+        wxString s_height = m_paraMap[wxT("height")];
+        wxString s_pitch = m_paraMap[wxT("pitch")];
+        wxString s_speed = m_paraMap[wxT("speed")];
+        wxString s_direction = m_paraMap[wxT("direction")];
+        wxString s_scale = m_paraMap[wxT("scale")];
+
+        double height, pitch, speed, scale;
+        s_height.ToDouble(&height);
+        s_pitch.ToDouble(&pitch);
+        s_speed.ToDouble(&speed);
+        s_scale.ToDouble(&scale);
+
+        m_cadmodel.slice(height, pitch, speed, s_direction, scale);
+    }
 }

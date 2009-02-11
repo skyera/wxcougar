@@ -56,7 +56,7 @@ string genMsg(const string& info, const wxString& line)
 
 Cadmodel::Cadmodel():m_loaded(false)
 {
-    
+    m_sliced = false;    
 }
 
 bool Cadmodel::open(const wxString& filename)
@@ -289,4 +289,15 @@ int Cadmodel::createGLModellist()
     glEnd();
     glEndList();
     return id;
+}
+
+bool Cadmodel::slice(double height, double pitch, double speed, const wxString& direction, double scale)
+{
+    m_sliced = false;
+    return true;
+}
+
+void Cadmodel::scaleModel(double scale)
+{
+
 }

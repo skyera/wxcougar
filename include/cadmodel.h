@@ -16,6 +16,7 @@ public:
     virtual ~Cadmodel();
     
     bool open(const wxString& filename);
+    bool slice(double height, double pitch, double speed, const wxString& direction, double scale);
     
     int createGLModellist();
     bool getSolidline(wxTextFile& file);
@@ -29,9 +30,13 @@ public:
     void clearFacets();
     void calcDimension();
 
+    void scaleModel(double scale);
+
     bool m_loaded;
+    bool m_sliced;
     wxString m_line;
     std::vector<Facet*> m_facets;
+    std::vector<Facet*> m_oldfacets;
 
     double m_xsize;
     double m_ysize;
