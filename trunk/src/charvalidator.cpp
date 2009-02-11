@@ -25,6 +25,16 @@ bool CharValidator::Validate(wxWindow* parent)
         m_validatorWindow->SetFocus();
         m_validatorWindow->Refresh();
         return false;
+    } else {
+        double val = 0;
+        text.ToDouble(&val);
+        if(val <= 0) {
+            wxMessageBox(wxT("field <= 0"), wxT("Error"), wxOK|wxICON_ERROR); 
+            m_validatorWindow->SetBackgroundColour(wxT("pink"));
+            m_validatorWindow->SetFocus();
+            m_validatorWindow->Refresh();
+            return false;
+        }
     } 
     
     return true;
