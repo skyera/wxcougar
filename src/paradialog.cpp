@@ -1,5 +1,6 @@
 #include "paradialog.h"
 #include <wx/choice.h>
+#include "charvalidator.h"
 
 using namespace std;
 
@@ -36,12 +37,9 @@ void ParaDialog::createControls()
         } else {
             wxTextCtrl *txtCtrl = new wxTextCtrl(this, -1, val, wxDefaultPosition, wxSize(80, -1)); 
             flex->Add(txtCtrl);
-
-            wxTextValidator validator(wxFILTER_NUMERIC);
-            wxArrayString strs;
-            strs.Add(wxT("-"));
-            validator.SetExcludes(strs);
-            txtCtrl->SetValidator(validator);
+            
+            CharValidator valid(key, m_paraMap);
+            txtCtrl->SetValidator(valid);
         }
         
     }

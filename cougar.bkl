@@ -12,6 +12,7 @@
         <sources> src/controlpanel.cpp </sources>
         <sources> src/modelcanvas.cpp </sources>
         <sources> src/paradialog.cpp </sources>
+        <sources> src/charvalidator.cpp </sources>
 
         <wx-lib> gl </wx-lib>
         <wx-lib> adv </wx-lib>
