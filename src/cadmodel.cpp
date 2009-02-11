@@ -57,20 +57,20 @@ string genMsg(const string& info, const wxString& line)
 Cadmodel::Cadmodel():m_loaded(false)
 {
     m_sliced = false;    
+    m_scale = 1.0;
 }
 
 bool Cadmodel::open(const wxString& filename)
 {
     wxTextFile file;
     if(file.Open(filename)) {
-        clearFacets();
+        clearFacets(m_facets);
+        clearFacets(m_oldfacets);
         try {
             getSolidline(file);
-            int c = 0;
             while(true) {
                 Facet *facet = getOneFacet(file); 
                 m_facets.push_back(facet);
-                c++;
             }
         }
         catch(EofError& err) {
@@ -83,6 +83,12 @@ bool Cadmodel::open(const wxString& filename)
         if(m_loaded) {
             cout << "no of facets:" << m_facets.size() << endl;
             calcDimension();
+
+            for(vector<Facet*>::iterator it = m_facets.begin(); it != m_facets.end(); it++) {
+                Facet *facet = *it; 
+                Facet *nfacet = new Facet(*facet);
+                m_oldfacets.push_back(nfacet);
+            }
         }
     } else {
         
@@ -219,17 +225,18 @@ void Cadmodel::getEndfacet(wxTextFile& file)
     wxArrayString tokens = getLine(file); 
 }
 
-void Cadmodel::clearFacets()
+void Cadmodel::clearFacets(vector<Facet*> & facets)
 {
-    for(vector<Facet*>::iterator it = m_facets.begin(); it != m_facets.end(); it++) {
+    for(vector<Facet*>::iterator it = facets.begin(); it != facets.end(); it++) {
         delete *it;
     }
-    m_facets.clear();
+    facets.clear();
 }
 
 Cadmodel::~Cadmodel()
 {
-    clearFacets();
+    clearFacets(m_facets);
+    clearFacets(m_oldfacets);
 }
 
 void Cadmodel::calcDimension()
@@ -246,20 +253,20 @@ void Cadmodel::calcDimension()
         }
     }
     double min, max;
-    min = *min_element(xlist.begin(), xlist.end());
-    max = *max_element(xlist.begin(), xlist.end());
+    m_minx = min = *min_element(xlist.begin(), xlist.end());
+    m_maxx = max = *max_element(xlist.begin(), xlist.end());
     m_xsize = max - min;
     m_xcenter = (min + max) / 2;
     
     //
-    min = *min_element(ylist.begin(), ylist.end());
-    max = *max_element(ylist.begin(), ylist.end());
+    m_miny = min = *min_element(ylist.begin(), ylist.end());
+    m_maxy = max = *max_element(ylist.begin(), ylist.end());
     m_ysize = max - min;
     m_ycenter = (min + max) / 2;
     
     //
-    min = *min_element(zlist.begin(), zlist.end());
-    max = *max_element(zlist.begin(), zlist.end());
+    m_minz = min = *min_element(zlist.begin(), zlist.end());
+    m_maxz = max = *max_element(zlist.begin(), zlist.end());
     m_zsize = max - min;
     m_zcenter = (min + max) / 2;
 
@@ -294,10 +301,39 @@ int Cadmodel::createGLModellist()
 bool Cadmodel::slice(double height, double pitch, double speed, const wxString& direction, double scale)
 {
     m_sliced = false;
+    m_height = height;
+    m_pitch = pitch;
+    m_speed = speed;
+    m_direction = direction;
+    m_scale = scale;
+
+    scaleModel(m_scale);
+    calcDimension();
     return true;
 }
 
 void Cadmodel::scaleModel(double scale)
 {
+    clearFacets(m_facets);
+    for(vector<Facet*>::iterator it = m_oldfacets.begin(); it != m_oldfacets.end(); it++) {
+        Facet *facet = *it;
+        Facet *nfacet = new Facet(*facet);
+        nfacet->scale(scale);
+        nfacet->changeDirection(m_direction);
+        m_facets.push_back(nfacet);
+    }
+}
 
+void Cadmodel::createLayers()
+{
+    double z = m_minz + m_height; 
+
+    while(z < m_maxz) {
+        
+    }
+}
+
+void Cadmodel::createOnelayer(double z)
+{
+    
 }

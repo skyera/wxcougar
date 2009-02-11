@@ -27,10 +27,12 @@ public:
     Point getVertex(wxTextFile& file);
     void getEndloop(wxTextFile& file);
     void getEndfacet(wxTextFile& file);
-    void clearFacets();
+    void clearFacets(std::vector<Facet*>& facets);
     void calcDimension();
 
     void scaleModel(double scale);
+    void createLayers();
+    void createOnelayer(double z);
 
     bool m_loaded;
     bool m_sliced;
@@ -45,6 +47,21 @@ public:
     double m_ycenter;
     double m_zcenter;
     double m_diameter;
+    
+    // Slice parameters
+    double m_scale;
+    double m_height;
+    double m_pitch;
+    double m_speed;
+    wxString m_direction;
+
+    double m_minx;
+    double m_maxx;
+    double m_miny;
+    double m_maxy;
+    double m_minz;
+    double m_maxz;
+
 };
 
 #endif

@@ -59,6 +59,7 @@ wxSizer* ControlPanel::createOneDimension(const wxString& caption, const vector<
 
          wxStaticText *lblCtrl = new wxStaticText(this, wxID_ANY, label);
          wxTextCtrl *txtCtrl = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(70, -1), wxTE_READONLY); 
+         m_txtMap[key] = txtCtrl;
 
         flex->Add(lblCtrl);
         flex->Add(txtCtrl, 0, wxEXPAND);
@@ -69,4 +70,15 @@ wxSizer* ControlPanel::createOneDimension(const wxString& caption, const vector<
     
 
     return 0;
+}
+
+void ControlPanel::setDimension(map<wxString, double> & dmap)
+{
+    for(map<wxString, double>::iterator it = dmap.begin(); it != dmap.end(); it++) {
+        wxString key = it->first;
+        double val = it->second;
+        wxString s = wxString::Format(wxT("%.4f"), val);
+        wxTextCtrl* txtCtrl = m_txtMap[key];
+        txtCtrl->SetValue(s);
+    }
 }

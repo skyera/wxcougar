@@ -68,6 +68,12 @@ void CougarFrame::OnOpen(wxCommandEvent& event)
     if(dlg.ShowModal() == wxID_OK) {
         wxString filename = dlg.GetPath();    
         m_cadmodel.open(filename);
+        
+        map<wxString, double> dmap;
+        dmap[wxT("oldx")] = m_cadmodel.m_xsize;
+        dmap[wxT("oldy")] = m_cadmodel.m_ysize;
+        dmap[wxT("oldz")] = m_cadmodel.m_zsize;
+        m_controlPanel->setDimension(dmap);
         m_modelCanvas->Refresh();
     }
 }
@@ -77,8 +83,8 @@ void CougarFrame::createControls()
     wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
     
     // control panel
-    ControlPanel *leftPanel = new ControlPanel(this);
-    sizer->Add(leftPanel);
+    m_controlPanel = new ControlPanel(this);
+    sizer->Add(m_controlPanel);
     
     // splitter
     wxSplitterWindow *splitter = createSplitter();
@@ -128,6 +134,10 @@ void CougarFrame::createToolbar()
 
 void CougarFrame::OnSlice(wxCommandEvent& event)
 {
+    if(!m_cadmodel.m_loaded) {
+        return;
+    }
+
     ParaDialog dlg(this, -1, wxT("slice parameters"), m_paraMap);
     if(dlg.ShowModal() == wxID_OK) {
         wxString dir = dlg.getDirection();
@@ -146,5 +156,11 @@ void CougarFrame::OnSlice(wxCommandEvent& event)
         s_scale.ToDouble(&scale);
 
         m_cadmodel.slice(height, pitch, speed, s_direction, scale);
+        map<wxString, double> dmap;
+        dmap[wxT("newx")] = m_cadmodel.m_xsize;
+        dmap[wxT("newy")] = m_cadmodel.m_ysize;
+        dmap[wxT("newz")] = m_cadmodel.m_zsize;
+        m_controlPanel->setDimension(dmap);
+        m_modelCanvas->Refresh();
     }
 }

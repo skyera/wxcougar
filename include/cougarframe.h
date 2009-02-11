@@ -7,6 +7,7 @@
 #include "cadmodel.h"
 
 class Modelcanvas;
+class ControlPanel;
 
 class CougarFrame: public wxFrame
 {
@@ -22,7 +23,8 @@ private:
     void createToolbar();
     
     DECLARE_EVENT_TABLE()
-
+    
+    ControlPanel *m_controlPanel;
     //
     Cadmodel m_cadmodel;
     Modelcanvas* m_modelCanvas;
