@@ -3,6 +3,7 @@
 
 #include <wx/wx.h>
 #include <wx/splitter.h>
+#include <map>
 #include "cadmodel.h"
 
 class Modelcanvas;
@@ -25,6 +26,7 @@ private:
     //
     Cadmodel m_cadmodel;
     Modelcanvas* m_modelCanvas;
+    std::map<wxString, wxString> m_paraMap;
 };
 
 #endif

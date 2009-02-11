@@ -23,6 +23,14 @@ CougarFrame::CougarFrame(const wxString& title):
     createToolbar();
     createControls();
     Centre();
+
+    //
+    m_paraMap.insert(make_pair(wxT("height"), wxT("1.0")));
+    m_paraMap.insert(make_pair(wxT("pitch"), wxT("1.0")));
+    m_paraMap.insert(make_pair(wxT("speed"), wxT("10.0")));
+    m_paraMap.insert(make_pair(wxT("direction"), wxT("+Z")));
+    m_paraMap.insert(make_pair(wxT("scale"), wxT("1.0")));
+
 }
 
 void CougarFrame::createMenu()
@@ -120,6 +128,6 @@ void CougarFrame::createToolbar()
 
 void CougarFrame::OnSlice(wxCommandEvent& event)
 {
-    ParaDialog dlg(this, -1, wxT("slice parameters"));
+    ParaDialog dlg(this, -1, wxT("slice parameters"), m_paraMap);
     dlg.ShowModal();
 }
