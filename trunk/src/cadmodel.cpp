@@ -336,15 +336,15 @@ void Cadmodel::createLayers()
     double z = m_minz + m_height; 
     double lastz = m_minz;
     while(z < m_maxz) {
-        pair<code, Layer> ret = createOnelayer(z); 
-        code cod  = ret.first;
-        if(cod == OK) {
+        pair<int, Layer> ret = createOnelayer(z); 
+        int cod  = ret.first;
+        if(cod == 1) {
             m_layers.push_back(ret.second); 
             lastz = z;
             z += m_height;
-        }else if(cod == ERROR) {
+        }else if(cod == 2) {
             break;
-        } else if(cod == REDO) {
+        } else if(cod == 3) {
             z = z - m_height * 0.01; 
             if(z < lastz) {
                 break;
@@ -358,16 +358,20 @@ void Cadmodel::createLayers()
     cout << "no of layers:" << m_layers.size() << endl;
 }
 
-pair<code, Layer> Cadmodel::createOnelayer(double z)
+// code 0 - empty
+//      1 - new layer
+//      2 - error
+//      3 - redo
+pair<int, Layer> Cadmodel::createOnelayer(double z)
 {
-    pair<code, Layer> ret;
+    pair<int, Layer> ret;
     vector<Line> lines;
     for(vector<Facet*>::iterator it = m_facets.begin(); it != m_facets.end(); it++) {
         Facet *facet = *it;
         pair<int, Line> p = facet->intersect(z);
         int code = p.first;
         if(code == -1) {
-            ret.first = REDO;
+            ret.first = 3;
             return ret;
         } else if(code == 1) {
             lines.push_back(p.second); 
@@ -378,13 +382,13 @@ pair<code, Layer> Cadmodel::createOnelayer(double z)
         Layer layer(z, m_pitch);
         bool ok = layer.setLines(lines);
         if(ok) {
-            ret.first = OK;
+            ret.first = 1;
             ret.second = layer;
         } else {
-            ret.first = ERROR;
+            ret.first = 2;
         }
     } else {
-        ret.first = EMPTY;
+        ret.first = 0;
     }
 
     return ret;
@@ -419,4 +423,14 @@ void Cadmodel::prevLayer()
             m_currLayer = m_layers.size() - 1;
         }
     }
+}
+
+int Cadmodel::getNoLayers()
+{
+    return m_layers.size();
+}
+
+int Cadmodel::getCurrLayerIndex()
+{
+    return m_currLayer;
 }

@@ -1,17 +1,10 @@
 #include "facet.h"
+#include "utility.h"
 
 using namespace std;
+using namespace cougar;
 
-const double LIMIT = 1e-8;
-bool equal(double d1, double d2)
-{
-    double diff = fabs(d1 - d2);
-    if(diff < LIMIT) {
-        return true;
-    } else {
-        return false;
-    }
-}
+namespace {
 
 bool isIntersect(const Point& p1, const Point& p2, double z)
 {
@@ -44,6 +37,8 @@ Point calcIntersect(const Point& p1, const Point& p2, double z)
     
     Point p(x, y, z);
     return p;
+}
+
 }
 
 Facet::Facet(const Point& normal, const std::vector<Point>& pts):normal(normal), points(pts)

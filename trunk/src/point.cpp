@@ -1,7 +1,9 @@
 #include "point.h"
 #include <cmath>
+#include "utility.h"
 
 using namespace std;
+using namespace cougar;
 
 Point::Point(double x, double y, double z)
 {
@@ -15,20 +17,6 @@ Point::Point(const Point& rhs)
     x = rhs.x;
     y = rhs.y;
     z = rhs.z;
-}
-
-namespace {
-const double LIMIT = 1e-8;
-bool equal(double d1, double d2)
-{
-    double diff = fabs(d1 - d2);
-    if(diff <= LIMIT) {
-        return true;
-    } else {
-        return false;
-    }
-}
-
 }
 
 bool Point::operator==(const Point& rhs) const

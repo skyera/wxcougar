@@ -9,6 +9,7 @@ BEGIN_EVENT_TABLE(Modelcanvas, wxGLCanvas)
     EVT_SIZE(Modelcanvas::OnSize)
     EVT_LEFT_DOWN(Modelcanvas::OnLeftDown)
     EVT_MOUSE_EVENTS(Modelcanvas::OnMouseEvent)
+    EVT_ERASE_BACKGROUND(Modelcanvas::OnEraseBackground)
 END_EVENT_TABLE()
 
 Modelcanvas::Modelcanvas(wxWindow* parent, Cadmodel *cadmodel):wxGLCanvas(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE)
@@ -45,7 +46,7 @@ void Modelcanvas::OnSize(wxSizeEvent& event)
     GetClientSize(&w, &h);
     SetCurrent();
     glViewport(0, 0, w, h);
-    Refresh();
+    Refresh(false);
 }
 
 void Modelcanvas::setupProjection()
@@ -161,4 +162,9 @@ void Modelcanvas::showPath()
 
     int id = m_cadmodel->getCurrLayerGLList();
     glCallList(id);
+}
+
+void Modelcanvas::OnEraseBackground(wxEraseEvent& event)
+{
+    //event.Skip();
 }

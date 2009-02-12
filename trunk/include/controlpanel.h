@@ -10,7 +10,10 @@ class ControlPanel: public wxPanel
 {
 public:
     ControlPanel(wxWindow *parent);
-    void setDimension(std::map<wxString, double>& dmap);
+    void setDimension(std::map<wxString, wxString>& dmap);
+    void setSliceInfo(const std::map<wxString, wxString>& paraMap);
+    void setNoLayer(int no);
+    void setCurrLayer(int layer);
 private:
     void createControls();
     wxSizer* createDimensions();

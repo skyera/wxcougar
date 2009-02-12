@@ -14,6 +14,7 @@ public:
     void OnSize(wxSizeEvent& event);
     void OnLeftDown(wxMouseEvent& event);
     void OnMouseEvent(wxMouseEvent& event);
+    void OnEraseBackground(wxEraseEvent& event);
     DECLARE_EVENT_TABLE()
 
 private:

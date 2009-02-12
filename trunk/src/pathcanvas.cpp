@@ -4,6 +4,7 @@
 BEGIN_EVENT_TABLE(Pathcanvas, wxGLCanvas)
     EVT_PAINT(Pathcanvas::OnPaint)
     EVT_SIZE(Pathcanvas::OnSize)
+    EVT_ERASE_BACKGROUND(Pathcanvas::OnEraseBackground)
 END_EVENT_TABLE()
 
 Pathcanvas::Pathcanvas(wxWindow* parent, Cadmodel *cadmodel):
@@ -32,7 +33,7 @@ void Pathcanvas::OnSize(wxSizeEvent& event)
     GetClientSize(&w, &h);
     SetCurrent();
     glViewport(0, 0, w, h);
-    Refresh();
+    Refresh(false);
 }
 
 void Pathcanvas::showPath()
@@ -81,4 +82,9 @@ void Pathcanvas::setupProjection()
     //double far = diameter * 4;
     //glOrtho(left, right, bottom, top, near, far);
     glOrtho(left, right, bottom, top, 0.0, diameter * 2);
+}
+
+void Pathcanvas::OnEraseBackground(wxEraseEvent& event)
+{
+    //event.Skip();
 }
