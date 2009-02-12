@@ -5,6 +5,7 @@
 #include "utility.h"
 #include <algorithm>
 #include <set>
+#include <cstdlib>
 
 using namespace std;
 using namespace cougar;
@@ -25,6 +26,7 @@ bool Layer::setLines(const vector<Line>& lines)
 
     calcDimension();
     createScanlines();
+    createChunks();
     return true;
 }
 
@@ -140,6 +142,7 @@ void Layer::mergeLines(vector<Line>& loop)
 
 int Layer::createGLList()
 {
+    srand(time(NULL));
     int id = 1001;
 
     glColor3f(1, 1, 1);
@@ -156,16 +159,19 @@ int Layer::createGLList()
         }
     }
     
-    glColor3f(0, 0, 1);
-    for(vector<vector<Line> > ::iterator it = m_scanlines.begin(); it != m_scanlines.end(); it++) {
-        vector<Line>& scanlines = *it;
-        for(vector<Line>::iterator lit = scanlines.begin(); lit != scanlines.end(); lit++) {
+    for(vector<vector<Line> > ::iterator it = m_chunks.begin(); it != m_chunks.end(); it++) {
+        vector<Line>& chunk = *it;
+        int r = rand() % 256;
+        int g = rand() % 256;
+        int b = rand() % 256;
+        glColor3ub(r, g, b);
+        //glColor3i(0, 0, 255);
+        for(vector<Line>::iterator lit = chunk.begin(); lit != chunk.end(); lit++) {
             Line& line = *lit;      
             Point& p1 = line.m_p1;
             glVertex3f(p1.x, p1.y, p1.z);
             Point& p2 = line.m_p2;
             glVertex3f(p2.x, p2.y, p2.z);
-
         }
     }
     glEnd();
@@ -354,4 +360,63 @@ void Layer::calcDimension()
 
     m_miny = *min_element(ylist.begin(), ylist.end());
     m_maxy = *max_element(ylist.begin(), ylist.end());
+}
+
+pair<bool, Line> Layer::getOverlapLine(const Line& line, std::vector<Line>& scanline)
+{
+    pair<bool, Line> ret;
+    double y2 = scanline[0].m_p1.y;
+    double y1 = line.m_p1.y;
+
+    double distance = fabs(y2 - y1);
+    if(equal(distance, m_pitch) || distance < m_pitch) {
+        for(vector<Line>::iterator it = scanline.begin(); it != scanline.end(); it++) {
+            if((it->m_p1.x >= line.m_p2.x) || (it->m_p2.x <= line.m_p1.x)) {
+            
+            } else {
+                ret.first = true;
+                ret.second = *it;
+                scanline.erase(it);
+                return ret;
+            }
+        } 
+    }
+
+    ret.first = false;
+    return ret;
+}
+
+void Layer::createChunks()
+{
+    m_chunks.clear();    
+    while(!m_scanlines.empty()) {
+        vector<Line> chunk;
+        vector<Line>& scanline = m_scanlines[0];
+        Line line = scanline.front();
+        scanline.erase(scanline.begin());
+        chunk.push_back(line);
+
+        for(int i = 1; i < m_scanlines.size(); i++) {
+            vector<Line>& scanline = m_scanlines[i];
+            pair<bool, Line> pair = getOverlapLine(line, scanline); 
+            if(pair.first) {
+                chunk.push_back(pair.second);
+                line = pair.second;
+            } else {
+                break;
+            }
+        }
+        
+        cout << "chunk size " << chunk.size() << endl;
+        m_chunks.push_back(chunk);
+        
+        vector<vector<Line> > scanlines;
+        for(vector<vector<Line> >::iterator it = m_scanlines.begin(); it != m_scanlines.end(); it++) {
+            if(!it->empty()) {
+                scanlines.push_back(*it);
+            }
+        }
+        m_scanlines = scanlines;
+    }
+    cout << "no of chunks " << m_chunks.size() << endl;
 }
