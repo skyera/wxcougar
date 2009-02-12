@@ -329,11 +329,31 @@ void Cadmodel::createLayers()
     double z = m_minz + m_height; 
 
     while(z < m_maxz) {
-        
+        pair<bool, vector<Line> > p = createOnelayer(z); 
     }
 }
 
-void Cadmodel::createOnelayer(double z)
+pair<bool, vector<Line> > Cadmodel::createOnelayer(double z)
 {
+    pair<bool, vector<Line> > ret;
+    vector<Line> lines;
+    for(vector<Facet*>::iterator it = m_facets.begin(); it != m_facets.end(); it++) {
+        Facet *facet = *it;
+        pair<int, Line> p = facet->intersect(z);
+        int code = p.first;
+        if(code == -1) {
+            ret.first = false;
+            return ret;
+        } else if(code == 1) {
+            lines.push_back(p.second); 
+        }
+    } 
     
+    if(!lines.empty()) {
+        Layer layer(z, m_pitch);
+        layer.setLines(lines);
+    }
+
+    ret.second = lines;
+    return ret;
 }
