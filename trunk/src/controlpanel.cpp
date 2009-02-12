@@ -16,8 +16,10 @@ void ControlPanel::createControls()
     SetSizer(sizer1);
     
     wxSizer *sizer3 = createDimensions();
-    sizer2->Add(sizer3, 0, wxEXPAND|wxALIGN_CENTER);
-
+    sizer2->Add(sizer3, 0, wxALL|wxEXPAND|wxALIGN_CENTER, 2);
+    
+    wxSizer *sizer4 = createSliceInfo();
+    sizer2->Add(sizer4, 0, wxALL|wxEXPAND|wxALIGN_CENTER, 2);
 }
 
 wxSizer* ControlPanel::createDimensions()
@@ -81,4 +83,28 @@ void ControlPanel::setDimension(map<wxString, double> & dmap)
         wxTextCtrl* txtCtrl = m_txtMap[key];
         txtCtrl->SetValue(s);
     }
+}
+
+wxSizer* ControlPanel::createSliceInfo()
+{
+    wxStaticBoxSizer *sizer = new wxStaticBoxSizer(new wxStaticBox(this, -1, wxT("Slice Info")), wxVERTICAL); 
+    wxFlexGridSizer *flex = new wxFlexGridSizer(6, 2, 2, 2);
+    sizer->Add(flex, 1, wxEXPAND);
+    
+    wxArrayString items;
+    items.Add(wxT("height"));
+    items.Add(wxT("pitch"));
+    items.Add(wxT("speed"));
+    items.Add(wxT("direction"));
+    items.Add(wxT("scale"));
+    items.Add(wxT("nolayer"));
+    items.Add(wxT("currLayer"));
+
+    for(int i = 0;  i < items.Count(); i++) {
+        flex->Add(new wxStaticText(this, -1, items[i]));
+        wxTextCtrl *txtCtrl = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(70, -1), wxTE_READONLY); 
+        flex->Add(txtCtrl, 0, wxEXPAND);
+    } 
+    flex->AddGrowableCol(1, 1);
+    return sizer;
 }
