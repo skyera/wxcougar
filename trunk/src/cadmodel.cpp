@@ -83,7 +83,8 @@ bool Cadmodel::open(const wxString& filename)
         if(m_loaded) {
             cout << "no of facets:" << m_facets.size() << endl;
             calcDimension();
-
+            
+            clearFacets(m_oldfacets);
             for(vector<Facet*>::iterator it = m_facets.begin(); it != m_facets.end(); it++) {
                 Facet *facet = *it; 
                 Facet *nfacet = new Facet(*facet);
@@ -152,7 +153,7 @@ Point Cadmodel::getNormal(wxTextFile& file)
 {
     wxArrayString tokens = getLine(file);
     int n = tokens.Count();
-    if(n == 2) {
+    if(n >= 1 && n <= 2) {
         wxString t1 = tokens[0];        
         if(t1 == wxT("endsolid")) {
             m_loaded = true;
