@@ -8,6 +8,7 @@
 
 class Modelcanvas;
 class ControlPanel;
+class Pathcanvas;
 
 class CougarFrame: public wxFrame
 {
@@ -17,6 +18,8 @@ public:
 private:
     void OnOpen(wxCommandEvent& event);
     void OnSlice(wxCommandEvent& event);
+    void OnNextLayer(wxCommandEvent& event);
+    void OnPrevLayer(wxCommandEvent& event);
     void createMenu();
     void createControls();
     wxSplitterWindow* createSplitter();
@@ -28,6 +31,7 @@ private:
     //
     Cadmodel m_cadmodel;
     Modelcanvas* m_modelCanvas;
+    Pathcanvas* m_pathCanvas;
     std::map<wxString, wxString> m_paraMap;
 };
 

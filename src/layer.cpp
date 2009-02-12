@@ -1,4 +1,7 @@
 #include "layer.h"
+#include <wx/wx.h>
+#include <iostream>
+#include <wx/glcanvas.h>
 
 using namespace std;
 
@@ -11,12 +14,16 @@ Layer::Layer(double z, double pitch)
 bool Layer::setLines(const vector<Line>& lines)
 {
     m_lines = lines;
-    createLoops();
+    bool ok = createLoops();
+    if(!ok) {
+        return false;
+    }
     return true;
 }
 
 bool Layer::createLoops()
 {
+    m_loops.clear();
     while(!m_lines.empty()) {
         Line line = m_lines.back();
         m_lines.pop_back();
@@ -55,6 +62,30 @@ bool Layer::createLoops()
                 return false;
             }
         }
+        m_loops.push_back(loop);
     }
+    cout << "no of loops:" << m_loops.size() << endl;
     return true;
+}
+
+int Layer::createGLList()
+{
+    int id = 1001;
+
+    glColor3f(1, 1, 1);
+    glNewList(id, GL_COMPILE);
+    glBegin(GL_LINES);
+    for(vector<vector<Line> >::iterator it = m_loops.begin(); it != m_loops.end(); it++) {
+        vector<Line>& loop = *it;
+        for(vector<Line>::iterator lit = loop.begin(); lit != loop.end(); lit++) {
+            Line& line = *lit;
+            Point& p1 = line.m_p1;
+            glVertex3f(p1.x, p1.y, p1.z);
+            Point& p2 = line.m_p2;
+            glVertex3f(p2.x, p2.y, p2.z);
+        }
+    }
+    glEnd();
+    glEndList();
+    return id;
 }

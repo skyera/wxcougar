@@ -89,6 +89,7 @@ bool Cadmodel::open(const wxString& filename)
                 Facet *nfacet = new Facet(*facet);
                 m_oldfacets.push_back(nfacet);
             }
+            m_sliced = false;
         }
     } else {
         
@@ -309,6 +310,11 @@ bool Cadmodel::slice(double height, double pitch, double speed, const wxString& 
 
     scaleModel(m_scale);
     calcDimension();
+    createLayers();
+    if(!m_layers.empty()) {
+        m_sliced = true;
+        m_currLayer = 0;
+    }
     return true;
 }
 
@@ -326,23 +332,42 @@ void Cadmodel::scaleModel(double scale)
 
 void Cadmodel::createLayers()
 {
+    m_layers.clear();
     double z = m_minz + m_height; 
-
+    double lastz = m_minz;
     while(z < m_maxz) {
-        pair<bool, vector<Line> > p = createOnelayer(z); 
+        pair<code, Layer> ret = createOnelayer(z); 
+        code cod  = ret.first;
+        if(cod == OK) {
+            m_layers.push_back(ret.second); 
+            lastz = z;
+            z += m_height;
+        }else if(cod == ERROR) {
+            break;
+        } else if(cod == REDO) {
+            z = z - m_height * 0.01; 
+            if(z < lastz) {
+                break;
+            }
+            cout << "recreate layer\n";
+        } else {
+            lastz = z;
+            z += m_height;
+        }
     }
+    cout << "no of layers:" << m_layers.size() << endl;
 }
 
-pair<bool, vector<Line> > Cadmodel::createOnelayer(double z)
+pair<code, Layer> Cadmodel::createOnelayer(double z)
 {
-    pair<bool, vector<Line> > ret;
+    pair<code, Layer> ret;
     vector<Line> lines;
     for(vector<Facet*>::iterator it = m_facets.begin(); it != m_facets.end(); it++) {
         Facet *facet = *it;
         pair<int, Line> p = facet->intersect(z);
         int code = p.first;
         if(code == -1) {
-            ret.first = false;
+            ret.first = REDO;
             return ret;
         } else if(code == 1) {
             lines.push_back(p.second); 
@@ -351,9 +376,47 @@ pair<bool, vector<Line> > Cadmodel::createOnelayer(double z)
     
     if(!lines.empty()) {
         Layer layer(z, m_pitch);
-        layer.setLines(lines);
+        bool ok = layer.setLines(lines);
+        if(ok) {
+            ret.first = OK;
+            ret.second = layer;
+        } else {
+            ret.first = ERROR;
+        }
+    } else {
+        ret.first = EMPTY;
     }
 
-    ret.second = lines;
     return ret;
+}
+
+int Cadmodel::getCurrLayerGLList()
+{
+    if(m_sliced) {
+        return m_layers[m_currLayer].createGLList();
+    } else {
+        return 0;
+    }
+}
+
+double Cadmodel::getCurrLayerHeight()
+{
+    return m_layers[m_currLayer].m_z;
+}
+
+void Cadmodel::nextLayer()
+{
+    if(m_sliced) {
+        m_currLayer = (m_currLayer + 1) % m_layers.size();
+    }
+}
+
+void Cadmodel::prevLayer()
+{
+    if(m_sliced) {
+        m_currLayer--;
+        if(m_currLayer < 0) {
+            m_currLayer = m_layers.size() - 1;
+        }
+    }
 }
