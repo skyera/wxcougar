@@ -7,6 +7,7 @@
 #include <wx/artprov.h>
 #include "paradialog.h"
 #include "pathcanvas.h"
+#include <wx/aboutdlg.h>
 
 using namespace std;
 
@@ -17,6 +18,9 @@ BEGIN_EVENT_TABLE(CougarFrame, wxFrame)
     EVT_MENU(ID_SLICE, CougarFrame::OnSlice)
     EVT_MENU(ID_NEXT, CougarFrame::OnNextLayer)
     EVT_MENU(ID_PREV, CougarFrame::OnPrevLayer)
+    EVT_MENU(wxID_EXIT, CougarFrame::OnExit)
+    EVT_MENU(wxID_ABOUT, CougarFrame::OnAbout)
+    EVT_MENU(wxID_SAVE, CougarFrame::OnSave)
 END_EVENT_TABLE()
 
 CougarFrame::CougarFrame(const wxString& title):
@@ -25,6 +29,7 @@ CougarFrame::CougarFrame(const wxString& title):
     createMenu();
     createToolbar();
     createControls();
+    CreateStatusBar();
     Centre();
 
     //
@@ -72,10 +77,14 @@ void CougarFrame::OnOpen(wxCommandEvent& event)
         wxString filename = dlg.GetPath();    
         m_cadmodel.open(filename);
         
-        map<wxString, double> dmap;
-        dmap[wxT("oldx")] = m_cadmodel.m_xsize;
-        dmap[wxT("oldy")] = m_cadmodel.m_ysize;
-        dmap[wxT("oldz")] = m_cadmodel.m_zsize;
+        map<wxString, wxString> dmap;
+        
+        dmap[wxT("oldx")] = wxString::Format(wxT("%f"), m_cadmodel.m_xsize);
+        dmap[wxT("oldy")] = wxString::Format(wxT("%f"), m_cadmodel.m_ysize);
+        dmap[wxT("oldz")] = wxString::Format(wxT("%f"), m_cadmodel.m_zsize);
+        dmap[wxT("newx")] = wxT("");
+        dmap[wxT("newy")] = wxT("");
+        dmap[wxT("newz")] = wxT("");
         m_controlPanel->setDimension(dmap);
         m_modelCanvas->Refresh();
     }
@@ -87,7 +96,7 @@ void CougarFrame::createControls()
     
     // control panel
     m_controlPanel = new ControlPanel(this);
-    sizer->Add(m_controlPanel);
+    sizer->Add(m_controlPanel, 0, wxEXPAND);
     
     // splitter
     wxSplitterWindow *splitter = createSplitter();
@@ -164,24 +173,66 @@ void CougarFrame::OnSlice(wxCommandEvent& event)
         s_scale.ToDouble(&scale);
 
         m_cadmodel.slice(height, pitch, speed, s_direction, scale);
-        map<wxString, double> dmap;
-        dmap[wxT("newx")] = m_cadmodel.m_xsize;
-        dmap[wxT("newy")] = m_cadmodel.m_ysize;
-        dmap[wxT("newz")] = m_cadmodel.m_zsize;
+        
+        map<wxString, wxString> dmap;
+        dmap[wxT("newx")] = wxString::Format(wxT("%f"), m_cadmodel.m_xsize);
+        dmap[wxT("newy")] = wxString::Format(wxT("%f"), m_cadmodel.m_ysize);
+        dmap[wxT("newz")] = wxString::Format(wxT("%f"), m_cadmodel.m_zsize);
         m_controlPanel->setDimension(dmap);
         m_modelCanvas->Refresh();
         m_pathCanvas->Refresh();
+        m_controlPanel->setSliceInfo(m_paraMap);
+        if(m_cadmodel.m_sliced) {
+            m_controlPanel->setNoLayer(m_cadmodel.getNoLayers());
+            m_controlPanel->setCurrLayer(m_cadmodel.getCurrLayerIndex());
+        }
     }
 }
 
 void CougarFrame::OnNextLayer(wxCommandEvent& event)
 {
     m_cadmodel.nextLayer();
-    Refresh();
+    m_controlPanel->setCurrLayer(m_cadmodel.getCurrLayerIndex());
+    m_modelCanvas->Refresh(false);
+    m_pathCanvas->Refresh(false);
 }
 
 void CougarFrame::OnPrevLayer(wxCommandEvent& event)
 {
     m_cadmodel.prevLayer();
-    Refresh();
+    m_controlPanel->setCurrLayer(m_cadmodel.getCurrLayerIndex());
+    m_modelCanvas->Refresh(false);
+    m_pathCanvas->Refresh(false);
+}
+
+void CougarFrame::OnExit(wxCommandEvent& event)
+{
+    Close();
+}
+
+void CougarFrame::OnAbout(wxCommandEvent& event)
+{
+    wxAboutDialogInfo info;
+    
+    info.SetName(wxT("wxCougar"));
+    info.SetVersion(wxT("0.1"));
+    info.SetDescription(wxT("Slice STL CAD file"));
+    info.SetCopyright(wxT("2009"));
+    info.AddDeveloper(wxT("Zhigang Liu"));
+    info.SetLicense(wxT("GPL2"));
+    wxAboutBox(info);
+}
+
+void CougarFrame::OnSave(wxCommandEvent& event)
+{
+    if(!m_cadmodel.m_sliced) {
+        return;
+    }
+    
+    wxString caption = wxT("Save slice info");
+    wxString wildcard = wxT("xml files (*.xml)|*.xml|All files(*.*)|*.*");
+    wxFileDialog dlg(this, caption, wxT("."), wxEmptyString, wildcard, wxSAVE);
+    if(dlg.ShowModal() == wxID_OK) {
+        wxString filename = dlg.GetPath();    
+    }
 }

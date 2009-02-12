@@ -20,6 +20,9 @@ private:
     void OnSlice(wxCommandEvent& event);
     void OnNextLayer(wxCommandEvent& event);
     void OnPrevLayer(wxCommandEvent& event);
+    void OnExit(wxCommandEvent& event);
+    void OnAbout(wxCommandEvent& event);
+    void OnSave(wxCommandEvent& event);
     void createMenu();
     void createControls();
     wxSplitterWindow* createSplitter();

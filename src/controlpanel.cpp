@@ -74,14 +74,13 @@ wxSizer* ControlPanel::createOneDimension(const wxString& caption, const vector<
     return 0;
 }
 
-void ControlPanel::setDimension(map<wxString, double> & dmap)
+void ControlPanel::setDimension(map<wxString, wxString> & dmap)
 {
-    for(map<wxString, double>::iterator it = dmap.begin(); it != dmap.end(); it++) {
+    for(map<wxString, wxString>::iterator it = dmap.begin(); it != dmap.end(); it++) {
         wxString key = it->first;
-        double val = it->second;
-        wxString s = wxString::Format(wxT("%.4f"), val);
+        wxString val = it->second;
         wxTextCtrl* txtCtrl = m_txtMap[key];
-        txtCtrl->SetValue(s);
+        txtCtrl->SetValue(val);
     }
 }
 
@@ -97,14 +96,33 @@ wxSizer* ControlPanel::createSliceInfo()
     items.Add(wxT("speed"));
     items.Add(wxT("direction"));
     items.Add(wxT("scale"));
-    items.Add(wxT("nolayer"));
-    items.Add(wxT("currLayer"));
+    items.Add(wxT("No layer"));
+    items.Add(wxT("curr layer"));
 
     for(int i = 0;  i < items.Count(); i++) {
         flex->Add(new wxStaticText(this, -1, items[i]));
         wxTextCtrl *txtCtrl = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize(70, -1), wxTE_READONLY); 
         flex->Add(txtCtrl, 0, wxEXPAND);
+        m_txtMap[items[i]] = txtCtrl;
     } 
     flex->AddGrowableCol(1, 1);
     return sizer;
+}
+
+void ControlPanel::setSliceInfo(const map<wxString, wxString>& paraMap)
+{
+    for(map<wxString, wxString>::const_iterator it = paraMap.begin(); it != paraMap.end(); it++) {
+        wxString key = it->first;
+        m_txtMap[key]->SetValue(it->second);
+    }
+}
+
+void ControlPanel::setNoLayer(int no)
+{
+    m_txtMap[wxT("No layer")]->SetValue(wxString::Format(wxT("%d"), no));
+}
+
+void ControlPanel::setCurrLayer(int layer)
+{
+    m_txtMap[wxT("curr layer")]->SetValue(wxString::Format(wxT("%d"), layer));
 }

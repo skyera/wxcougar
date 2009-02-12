@@ -10,7 +10,6 @@
 #include "point.h"
 #include "layer.h"
 
-enum code {REDO, ERROR, OK, EMPTY};
 class Cadmodel
 {
 public:
@@ -38,8 +37,10 @@ public:
     double getCurrLayerHeight();
     void nextLayer();
     void prevLayer();
+    int getNoLayers();
+    int getCurrLayerIndex();
 
-    std::pair<code, Layer> createOnelayer(double z);
+    std::pair<int, Layer> createOnelayer(double z);
 
     bool m_loaded;
     bool m_sliced;
