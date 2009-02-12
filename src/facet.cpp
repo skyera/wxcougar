@@ -90,7 +90,7 @@ void Facet::changeDirection(const wxString& direction)
     
         for(vector<Point>::iterator it = points.begin(); it != points.end(); it++) {
             Point& point = *it;    
-            swap(point.x, point.z);
+            swap(point.y, point.z);
             point.z = -point.z;
         }
     } else if(direction == wxT("+Z")) {

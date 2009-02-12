@@ -16,6 +16,7 @@
         <sources> src/line.cpp </sources>
         <sources> src/layer.cpp </sources>
         <sources> src/pathcanvas.cpp </sources>
+        <sources> src/utility.cpp </sources>
 
         <wx-lib> gl </wx-lib>
         <wx-lib> adv </wx-lib>

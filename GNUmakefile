@@ -50,7 +50,8 @@ COUGAR_OBJECTS =  \
 	cougar_charvalidator.o \
 	cougar_line.o \
 	cougar_layer.o \
-	cougar_pathcanvas.o
+	cougar_pathcanvas.o \
+	cougar_utility.o
 
 ### Conditionally set variables: ###
 
@@ -106,6 +107,9 @@ cougar_layer.o: ./src/layer.cpp
 	$(CXX) -c -o $@ $(COUGAR_CXXFLAGS) $(CPPDEPS) $<
 
 cougar_pathcanvas.o: ./src/pathcanvas.cpp
+	$(CXX) -c -o $@ $(COUGAR_CXXFLAGS) $(CPPDEPS) $<
+
+cougar_utility.o: ./src/utility.cpp
 	$(CXX) -c -o $@ $(COUGAR_CXXFLAGS) $(CPPDEPS) $<
 
 .PHONY: all install uninstall clean
