@@ -31,7 +31,7 @@ bool equal(double d1, double d2)
 
 }
 
-bool Point::operator==(const Point& rhs)
+bool Point::operator==(const Point& rhs) const
 {
     if(equal(x, rhs.x) && equal(y, rhs.y) && equal(z, rhs.z)) {
         return true;
