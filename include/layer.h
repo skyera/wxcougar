@@ -22,12 +22,15 @@ public:
     bool isIntersect(double y1, double y2, double y);
     double intersect_0(double y, const Line& line);
     bool isPeak(double y, const Point& point, const std::vector<Line>& loop);
+    void createChunks();
+    std::pair<bool, Line> getOverlapLine(const Line& line, std::vector<Line>& scanline);
 
     double m_z;
     double m_pitch;
     std::vector<Line> m_lines;
     std::vector<std::vector<Line> > m_loops;
     std::vector<std::vector<Line> > m_scanlines;
+    std::vector<std::vector<Line> > m_chunks;
     double m_miny;
     double m_maxy;
 };
