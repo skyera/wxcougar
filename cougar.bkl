@@ -13,6 +13,8 @@
         <sources> src/modelcanvas.cpp </sources>
         <sources> src/paradialog.cpp </sources>
         <sources> src/charvalidator.cpp </sources>
+        <sources> src/line.cpp </sources>
+        <sources> src/layer.cpp </sources>
 
         <wx-lib> gl </wx-lib>
         <wx-lib> adv </wx-lib>

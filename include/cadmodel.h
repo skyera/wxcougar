@@ -8,6 +8,7 @@
 
 #include "facet.h"
 #include "point.h"
+#include "layer.h"
 
 class Cadmodel
 {
@@ -32,13 +33,14 @@ public:
 
     void scaleModel(double scale);
     void createLayers();
-    void createOnelayer(double z);
+    std::pair<bool, std::vector<Line> > createOnelayer(double z);
 
     bool m_loaded;
     bool m_sliced;
     wxString m_line;
     std::vector<Facet*> m_facets;
     std::vector<Facet*> m_oldfacets;
+    std::vector<Layer> m_layers;
 
     double m_xsize;
     double m_ysize;
