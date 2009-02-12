@@ -6,6 +6,7 @@
 #include "modelcanvas.h"
 #include <wx/artprov.h>
 #include "paradialog.h"
+#include "pathcanvas.h"
 
 using namespace std;
 
@@ -14,6 +15,8 @@ enum { ID_SLICE = 2000, ID_NEXT, ID_PREV};
 BEGIN_EVENT_TABLE(CougarFrame, wxFrame)
     EVT_MENU(wxID_OPEN, CougarFrame::OnOpen)
     EVT_MENU(ID_SLICE, CougarFrame::OnSlice)
+    EVT_MENU(ID_NEXT, CougarFrame::OnNextLayer)
+    EVT_MENU(ID_PREV, CougarFrame::OnPrevLayer)
 END_EVENT_TABLE()
 
 CougarFrame::CougarFrame(const wxString& title):
@@ -104,6 +107,11 @@ wxSplitterWindow* CougarFrame::createSplitter()
     panel1->SetSizer(box);
 
     wxPanel *panel2 = new wxPanel(splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER);
+    m_pathCanvas = new Pathcanvas(panel2, &m_cadmodel);
+    wxBoxSizer *box2 = new wxBoxSizer(wxVERTICAL);
+    box2->Add(m_pathCanvas, 1, wxEXPAND);
+    panel2->SetSizer(box2);
+
     splitter->Initialize(panel1);
     splitter->SplitVertically(panel1, panel2, 300);
     splitter->SetMinimumPaneSize(10);
@@ -162,5 +170,18 @@ void CougarFrame::OnSlice(wxCommandEvent& event)
         dmap[wxT("newz")] = m_cadmodel.m_zsize;
         m_controlPanel->setDimension(dmap);
         m_modelCanvas->Refresh();
+        m_pathCanvas->Refresh();
     }
+}
+
+void CougarFrame::OnNextLayer(wxCommandEvent& event)
+{
+    m_cadmodel.nextLayer();
+    Refresh();
+}
+
+void CougarFrame::OnPrevLayer(wxCommandEvent& event)
+{
+    m_cadmodel.prevLayer();
+    Refresh();
 }

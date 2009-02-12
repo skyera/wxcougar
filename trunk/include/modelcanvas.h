@@ -19,6 +19,7 @@ public:
 private:
     void setupProjection();
     void showModel();
+    void showPath();
     void setupGLContext();
 
     Cadmodel *m_cadmodel;

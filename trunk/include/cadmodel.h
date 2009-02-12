@@ -10,6 +10,7 @@
 #include "point.h"
 #include "layer.h"
 
+enum code {REDO, ERROR, OK, EMPTY};
 class Cadmodel
 {
 public:
@@ -33,7 +34,12 @@ public:
 
     void scaleModel(double scale);
     void createLayers();
-    std::pair<bool, std::vector<Line> > createOnelayer(double z);
+    int getCurrLayerGLList();
+    double getCurrLayerHeight();
+    void nextLayer();
+    void prevLayer();
+
+    std::pair<code, Layer> createOnelayer(double z);
 
     bool m_loaded;
     bool m_sliced;
@@ -64,6 +70,7 @@ public:
     double m_minz;
     double m_maxz;
 
+    int m_currLayer;
 };
 
 #endif

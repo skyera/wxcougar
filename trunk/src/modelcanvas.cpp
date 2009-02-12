@@ -33,6 +33,7 @@ void Modelcanvas::OnPaint(wxPaintEvent& event)
         init = true;
     }
     showModel();
+    showPath();
     glFlush();
     SwapBuffers();
 }
@@ -99,7 +100,6 @@ void Modelcanvas::showModel()
 
 void Modelcanvas::OnLeftDown(wxMouseEvent& event)
 {
-    cout << "down";
 }
 
 void Modelcanvas::OnMouseEvent(wxMouseEvent& event)
@@ -151,4 +151,14 @@ void Modelcanvas::setupGLContext()
     glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
     glEnable(GL_COLOR_MATERIAL);
     //glMaterial(GL_FRONT, GL_SHININESS, 50);
+}
+
+void Modelcanvas::showPath()
+{
+    if(!m_cadmodel->m_sliced) {
+        return;
+    }
+
+    int id = m_cadmodel->getCurrLayerGLList();
+    glCallList(id);
 }

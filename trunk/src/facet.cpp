@@ -5,7 +5,7 @@ using namespace std;
 const double LIMIT = 1e-8;
 bool equal(double d1, double d2)
 {
-    double diff = abs(d1 - d2);
+    double diff = fabs(d1 - d2);
     if(diff < LIMIT) {
         return true;
     } else {
@@ -104,6 +104,10 @@ void Facet::changeDirection(const wxString& direction)
     } 
 }
 
+// 
+// return -1: error
+//         0: no intersection
+//         1: intersected
 pair<int, Line> Facet::intersect(double z)
 {
     pair<int, Line> p;
@@ -121,41 +125,40 @@ pair<int, Line> Facet::intersect(double z)
     
     if(c1 == 3 || c2 == 3) {
         p.first = 0;
-    } else {
+        return p;
+    } 
+    
+    //
+    vector<Point> pv;
+    Point pe;
+    int n = 0;
+    for(vector<Point>::iterator it = points.begin(); it != points.end(); it++) {
+        if(equal(it->z, z)) {
+            n++;
+            pe = *it;
+        } else {
+            pv.push_back(*it);
+        }             
+    }
 
-        vector<Point> pv;
-        Point pe;
-        int n = 0;
-        for(vector<Point>::iterator it = points.begin(); it != points.end(); it++) {
-            if(equal(it->z, z)) {
-                n++;
-                pe = *it;
-            } else {
-                pv.push_back(*it);
-            }             
-        }
-
-        if(n == 0) {
-            Line line = intersect_0(z); 
+    if(n == 0) {
+        Line line = intersect_0(z); 
+        p.second = line;
+        p.first = 1;
+    } else if(n == 1) {
+        Point p1 = pv[0];
+        Point p2 = pv[1];
+        if(isIntersect(p1, p2, z)) {
+            Point ap = calcIntersect(p1, p2, z);     
+            Line line(pe, ap);
             p.second = line;
             p.first = 1;
-        } else if(n == 1) {
-            Point p1 = pv[0];
-            Point p2 = pv[1];
-            if(isIntersect(p1, p2, z)) {
-                Point ap = calcIntersect(p1, p2, z);     
-                Line line(pe, ap);
-                p.second = line;
-                p.first = 1;
-            } else {
-                p.first = 0; 
-            }
-        } else if(n == 2 || n == 3) {
-            p.first = -1; 
         } else {
-            wxASSERT(0);
+             p.first = 0; 
         }
-    }
+    } else if(n == 2 || n == 3){
+        p.first = -1; 
+    } 
 
     return p;
 }
@@ -164,6 +167,7 @@ Line Facet::intersect_0(double z)
 {
     vector<Point> pv;
     int n = points.size();
+    wxASSERT(n == 3);
     for(int i = 0; i < n; i++) {
         int next = (i + 1) % n;    
         Point p1 = points[i];
