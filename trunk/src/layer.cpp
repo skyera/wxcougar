@@ -202,7 +202,6 @@ void Layer::createScanlines()
             cout << "recreate scan line\n";
         }
     }
-    cout << "no of scanlines:" << m_scanlines.size() << endl;
 }
 
 
@@ -407,7 +406,6 @@ void Layer::createChunks()
             }
         }
         
-        cout << "chunk size " << chunk.size() << endl;
         m_chunks.push_back(chunk);
         
         vector<vector<Line> > scanlines;
@@ -419,4 +417,52 @@ void Layer::createChunks()
         m_scanlines = scanlines;
     }
     cout << "no of chunks " << m_chunks.size() << endl;
+}
+
+void writeline(const Line& line, ofstream& f)
+{
+    Point pts[] = {line.m_p1, line.m_p2};
+    f << "<line>";
+    for(int i = 0; i < 2; i++) {
+        Point& p = pts[i];
+        f << "<point>"
+          << "<x>" << p.x << "</x>"
+          << "<y>" << p.y << "</y>"
+          << "<z>" << p.z << "</z>"
+          << "</point> ";
+    }  
+    f << "</line>\n";
+}
+
+void Layer::save(ofstream& f)
+{
+    f << "<layer id=\"" << m_id << "\" height=\"" << m_z << "\">\n";
+    f << "<loops num=\"" << m_loops.size() << "\">\n";
+    int count = 0;
+    for(vector<vector<Line> >::iterator it = m_loops.begin(); it != m_loops.end(); it++) {
+        vector<Line>& loop = *it;
+        count++;
+        f << "<loop id=\"" << count << "\">\n";
+        for(vector<Line>::iterator lit = loop.begin(); lit != loop.end(); lit++) {
+            writeline(*lit, f); 
+        }
+        f << "</loop>\n";
+    }
+    f << "</loops>\n";
+    
+    f << "<chunks num=\"" << m_chunks.size() << "\">\n";
+    count = 0;
+    for(vector<vector<Line> >::iterator it = m_chunks.begin(); it != m_chunks.end(); it++) {
+        vector<Line>& chunk = *it;
+        count++;
+        f << "<chunk id=\"" << count << "\">\n";
+        for(vector<Line>::iterator lit = chunk.begin(); lit != chunk.end(); lit++) {
+            writeline(*lit, f); 
+        }
+        f << "</chunk>\n";
+    }
+    f << "</chunks>\n";
+
+
+    f << "</layer>\n";  
 }

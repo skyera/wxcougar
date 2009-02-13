@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <utility>
+#include <fstream>
 #include "line.h"
 
 class Layer
@@ -24,6 +25,7 @@ public:
     bool isPeak(double y, const Point& point, const std::vector<Line>& loop);
     void createChunks();
     std::pair<bool, Line> getOverlapLine(const Line& line, std::vector<Line>& scanline);
+    void save(std::ofstream& f);
 
     double m_z;
     double m_pitch;
@@ -33,6 +35,7 @@ public:
     std::vector<std::vector<Line> > m_chunks;
     double m_miny;
     double m_maxy;
+    int m_id;
 };
 
 #endif

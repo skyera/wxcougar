@@ -8,6 +8,7 @@
 #include "paradialog.h"
 #include "pathcanvas.h"
 #include <wx/aboutdlg.h>
+#include <wx/filename.h>
 
 using namespace std;
 
@@ -29,7 +30,7 @@ CougarFrame::CougarFrame(const wxString& title):
     createMenu();
     createToolbar();
     createControls();
-    CreateStatusBar();
+    m_statusbar = CreateStatusBar();
     Centre();
 
     //
@@ -75,8 +76,12 @@ void CougarFrame::OnOpen(wxCommandEvent& event)
     wxFileDialog dlg(this, caption, wxT("."), wxEmptyString, wildcard, wxOPEN); 
     if(dlg.ShowModal() == wxID_OK) {
         wxString filename = dlg.GetPath();    
-        m_cadmodel.open(filename);
+        bool ok = m_cadmodel.open(filename);
+        if(!ok) {
+            return;
+        }
         
+        m_filename = wxFileName(filename).GetName();
         map<wxString, wxString> dmap;
         
         dmap[wxT("oldx")] = wxString::Format(wxT("%f"), m_cadmodel.m_xsize);
@@ -87,6 +92,7 @@ void CougarFrame::OnOpen(wxCommandEvent& event)
         dmap[wxT("newz")] = wxT("");
         m_controlPanel->setDimension(dmap);
         m_modelCanvas->Refresh();
+        m_pathCanvas->Refresh();
     }
 }
 
@@ -138,13 +144,13 @@ void CougarFrame::createToolbar()
     wxBitmap help_bmp = wxArtProvider::GetBitmap(wxART_HELP);
     wxBitmap quit_bmp = wxArtProvider::GetBitmap(wxART_QUIT);
     
-    toolbar->AddTool(wxID_OPEN, wxT("open"), open_bmp);
-    toolbar->AddTool(ID_SLICE, wxT("slice"), slice_bmp);
-    toolbar->AddTool(wxID_SAVE, wxT("save"), save_bmp);
-    toolbar->AddTool(ID_NEXT, wxT("next layer"), next_bmp);
-    toolbar->AddTool(ID_PREV, wxT("prev layer"), prev_bmp);
-    toolbar->AddTool(wxID_ABOUT, wxT("about"), help_bmp);
-    toolbar->AddTool(wxID_EXIT, wxT("quit"), quit_bmp);
+    toolbar->AddTool(wxID_OPEN, wxT("open"), open_bmp, wxT("open"));
+    toolbar->AddTool(ID_SLICE, wxT("slice"), slice_bmp, wxT("slice"));
+    toolbar->AddTool(wxID_SAVE, wxT("save"), save_bmp, wxT("save"));
+    toolbar->AddTool(ID_NEXT, wxT("next layer"), next_bmp, wxT("next layer"));
+    toolbar->AddTool(ID_PREV, wxT("prev layer"), prev_bmp, wxT("prev layer"));
+    toolbar->AddTool(wxID_ABOUT, wxT("about"), help_bmp, wxT("about"));
+    toolbar->AddTool(wxID_EXIT, wxT("quit"), quit_bmp, wxT("exit"));
 
     toolbar->Realize();
 }
@@ -231,8 +237,15 @@ void CougarFrame::OnSave(wxCommandEvent& event)
     
     wxString caption = wxT("Save slice info");
     wxString wildcard = wxT("xml files (*.xml)|*.xml|All files(*.*)|*.*");
-    wxFileDialog dlg(this, caption, wxT("."), wxEmptyString, wildcard, wxSAVE);
+    wxFileDialog dlg(this, caption, wxT("."), m_filename, wildcard, wxSAVE);
     if(dlg.ShowModal() == wxID_OK) {
         wxString filename = dlg.GetPath();    
+        bool ext = wxFileName(filename).HasExt();
+        if(!ext) {
+            filename += wxT(".xml");
+        } 
+
+        m_cadmodel.save(filename);
+        m_statusbar->SetStatusText(wxT("slice info is saved in ") + filename, 0);
     }
 }
