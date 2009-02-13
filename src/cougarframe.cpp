@@ -31,6 +31,7 @@ CougarFrame::CougarFrame(const wxString& title):
     createToolbar();
     createControls();
     m_statusbar = CreateStatusBar();
+    m_statusbar->SetStatusText(wxT("Welcome"), 0);
     Centre();
 
     //
@@ -93,6 +94,7 @@ void CougarFrame::OnOpen(wxCommandEvent& event)
         m_controlPanel->setDimension(dmap);
         m_modelCanvas->Refresh();
         m_pathCanvas->Refresh();
+        m_statusbar->SetStatusText(wxT("open ") + filename, 0);
     }
 }
 
@@ -191,6 +193,7 @@ void CougarFrame::OnSlice(wxCommandEvent& event)
         if(m_cadmodel.m_sliced) {
             m_controlPanel->setNoLayer(m_cadmodel.getNoLayers());
             m_controlPanel->setCurrLayer(m_cadmodel.getCurrLayerIndex());
+            m_statusbar->SetStatusText(wxT("sliced"), 0);
         }
     }
 }
