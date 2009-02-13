@@ -39,6 +39,7 @@ public:
     void prevLayer();
     int getNoLayers();
     int getCurrLayerIndex();
+    void save(const wxString& filename);
 
     std::pair<int, Layer> createOnelayer(double z);
 

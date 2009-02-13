@@ -4,6 +4,7 @@
 #include <exception>
 #include <wx/tokenzr.h>
 #include <algorithm>
+#include <fstream>
 
 using namespace std;
 
@@ -91,11 +92,10 @@ bool Cadmodel::open(const wxString& filename)
                 m_oldfacets.push_back(nfacet);
             }
             m_sliced = false;
+            return true;
         }
-    } else {
-        
-    }
-    return true;
+    } 
+    return false;
 }
 
 bool Cadmodel::getSolidline(wxTextFile& file)
@@ -336,10 +336,13 @@ void Cadmodel::createLayers()
     m_layers.clear();
     double z = m_minz + m_height; 
     double lastz = m_minz;
+    int count = 0;
     while(z < m_maxz) {
         pair<int, Layer> ret = createOnelayer(z); 
         int cod  = ret.first;
         if(cod == 1) {
+            count++;
+            ret.second.m_id = count;
             m_layers.push_back(ret.second); 
             lastz = z;
             z += m_height;
@@ -434,4 +437,24 @@ int Cadmodel::getNoLayers()
 int Cadmodel::getCurrLayerIndex()
 {
     return m_currLayer;
+}
+
+void Cadmodel::save(const wxString& filename)
+{
+    ofstream f(filename.mb_str());    
+
+    f << "<slice>\n"
+      << "  <para>\n"
+      << "     <layerheight>" << m_height << "</layerheight>\n"
+      << "     <layerpitch>" << m_pitch << "</layerpitch>\n"
+      << "     <speed>" << m_speed << "</speed>\n"
+      << "  </para>\n"
+      << "  <layers num=\"" << m_layers.size() << "\">\n"; 
+    
+    for(vector<Layer>::iterator it = m_layers.begin(); it != m_layers.end(); it++) {
+        it->save(f); 
+    }
+
+    f << "  </layers>\n"
+      << "</slice>\n";
 }

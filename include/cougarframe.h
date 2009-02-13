@@ -3,6 +3,7 @@
 
 #include <wx/wx.h>
 #include <wx/splitter.h>
+#include <wx/statusbr.h>
 #include <map>
 #include "cadmodel.h"
 
@@ -36,6 +37,8 @@ private:
     Modelcanvas* m_modelCanvas;
     Pathcanvas* m_pathCanvas;
     std::map<wxString, wxString> m_paraMap;
+    wxString m_filename;
+    wxStatusBar *m_statusbar;
 };
 
 #endif
