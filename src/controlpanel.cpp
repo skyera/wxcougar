@@ -51,7 +51,7 @@ wxSizer* ControlPanel::createOneDimension(const wxString& caption, const vector<
     wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
     
     wxStaticText *label = new wxStaticText(this, wxID_ANY, caption);
-    sizer->Add(label, 0, wxALIGN_CENTER);
+    sizer->Add(label, 0, wxALIGN_CENTER|wxALL, 5);
     
     wxFlexGridSizer *flex = new wxFlexGridSizer(items.size(), 2, 2, 2);
     vector<pair<wxString, wxString> >::const_iterator it;
