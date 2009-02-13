@@ -76,7 +76,6 @@ bool Layer::createLoops()
         mergeLines(loop);
         m_loops.push_back(loop);
     }
-    cout << "no of loops:" << m_loops.size() << endl;
     return true;
 }
 
@@ -416,7 +415,6 @@ void Layer::createChunks()
         }
         m_scanlines = scanlines;
     }
-    cout << "no of chunks " << m_chunks.size() << endl;
 }
 
 void writeline(const Line& line, ofstream& f)
