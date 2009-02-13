@@ -70,7 +70,6 @@ void CougarFrame::createMenu()
 
 void CougarFrame::OnOpen(wxCommandEvent& event)
 {
-    cout << "open\n";    
     wxString caption = wxT("Open a STL cad file");
     wxString wildcard = wxT("STL files (*.stl)|*.stl|All files(*.*)|*.*");
     wxFileDialog dlg(this, caption, wxT("."), wxEmptyString, wildcard, wxOPEN); 
@@ -78,6 +77,7 @@ void CougarFrame::OnOpen(wxCommandEvent& event)
         wxString filename = dlg.GetPath();    
         bool ok = m_cadmodel.open(filename);
         if(!ok) {
+            wxMessageBox(wxT("cannot open ") + filename, wxT("Error"), wxOK|wxICON_ERROR);
             return;
         }
         
