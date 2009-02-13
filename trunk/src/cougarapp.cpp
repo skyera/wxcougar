@@ -1,5 +1,9 @@
-// Zhigang Liu
-// Feb 2009
+//----------------------------------------------------------------------------
+// Author     : Zhigang Liu
+// Date       : Feb 2009
+// License    : GPL2
+// Description: Slice STL CAD file layer by layer
+//----------------------------------------------------------------------------
 #include "cougarapp.h"
 #include "cougarframe.h"
 
