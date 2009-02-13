@@ -17,7 +17,7 @@ void ControlPanel::createControls()
     
     wxSizer *sizer3 = createDimensions();
     sizer2->Add(sizer3, 0, wxALL|wxEXPAND|wxALIGN_CENTER, 2);
-    
+    sizer2->AddStretchSpacer(); 
     wxSizer *sizer4 = createSliceInfo();
     sizer2->Add(sizer4, 0, wxALL|wxEXPAND|wxALIGN_CENTER, 2);
 }
