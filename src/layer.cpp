@@ -144,9 +144,27 @@ int Layer::createGLList()
     srand(time(NULL));
     int id = 1001;
 
-    glColor3f(1, 1, 1);
     glNewList(id, GL_COMPILE);
     glBegin(GL_LINES);
+    
+    // chunks
+    for(vector<vector<Line> > ::iterator it = m_chunks.begin(); it != m_chunks.end(); it++) {
+        vector<Line>& chunk = *it;
+        int r = rand() % 256;
+        int g = rand() % 256;
+        int b = rand() % 256;
+        glColor3ub(r, g, b);
+        for(vector<Line>::iterator lit = chunk.begin(); lit != chunk.end(); lit++) {
+            Line& line = *lit;      
+            Point& p1 = line.m_p1;
+            glVertex3f(p1.x, p1.y, p1.z);
+            Point& p2 = line.m_p2;
+            glVertex3f(p2.x, p2.y, p2.z);
+        }
+    }    
+    
+    glColor3f(1, 1, 1);
+    // loops
     for(vector<vector<Line> >::iterator it = m_loops.begin(); it != m_loops.end(); it++) {
         vector<Line>& loop = *it;
         for(vector<Line>::iterator lit = loop.begin(); lit != loop.end(); lit++) {
@@ -157,22 +175,7 @@ int Layer::createGLList()
             glVertex3f(p2.x, p2.y, p2.z);
         }
     }
-    
-    for(vector<vector<Line> > ::iterator it = m_chunks.begin(); it != m_chunks.end(); it++) {
-        vector<Line>& chunk = *it;
-        int r = rand() % 256;
-        int g = rand() % 256;
-        int b = rand() % 256;
-        glColor3ub(r, g, b);
-        //glColor3i(0, 0, 255);
-        for(vector<Line>::iterator lit = chunk.begin(); lit != chunk.end(); lit++) {
-            Line& line = *lit;      
-            Point& p1 = line.m_p1;
-            glVertex3f(p1.x, p1.y, p1.z);
-            Point& p2 = line.m_p2;
-            glVertex3f(p2.x, p2.y, p2.z);
-        }
-    }
+
     glEnd();
     glEndList();
     return id;
