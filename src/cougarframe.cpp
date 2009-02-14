@@ -85,9 +85,9 @@ void CougarFrame::OnOpen(wxCommandEvent& event)
         m_filename = wxFileName(filename).GetName();
         map<wxString, wxString> dmap;
         
-        dmap[wxT("oldx")] = wxString::Format(wxT("%f"), m_cadmodel.m_xsize);
-        dmap[wxT("oldy")] = wxString::Format(wxT("%f"), m_cadmodel.m_ysize);
-        dmap[wxT("oldz")] = wxString::Format(wxT("%f"), m_cadmodel.m_zsize);
+        dmap[wxT("oldx")] = wxString::Format(wxT("%f"), m_cadmodel.getXsize());
+        dmap[wxT("oldy")] = wxString::Format(wxT("%f"), m_cadmodel.getYsize());;
+        dmap[wxT("oldz")] = wxString::Format(wxT("%f"), m_cadmodel.getZsize());
         dmap[wxT("newx")] = wxT("");
         dmap[wxT("newy")] = wxT("");
         dmap[wxT("newz")] = wxT("");
@@ -159,7 +159,7 @@ void CougarFrame::createToolbar()
 
 void CougarFrame::OnSlice(wxCommandEvent& event)
 {
-    if(!m_cadmodel.m_loaded) {
+    if(!m_cadmodel.isLoaded()) {
         return;
     }
 
@@ -183,14 +183,14 @@ void CougarFrame::OnSlice(wxCommandEvent& event)
         m_cadmodel.slice(height, pitch, speed, s_direction, scale);
         
         map<wxString, wxString> dmap;
-        dmap[wxT("newx")] = wxString::Format(wxT("%f"), m_cadmodel.m_xsize);
-        dmap[wxT("newy")] = wxString::Format(wxT("%f"), m_cadmodel.m_ysize);
-        dmap[wxT("newz")] = wxString::Format(wxT("%f"), m_cadmodel.m_zsize);
+        dmap[wxT("newx")] = wxString::Format(wxT("%f"), m_cadmodel.getXsize());
+        dmap[wxT("newy")] = wxString::Format(wxT("%f"), m_cadmodel.getYsize());
+        dmap[wxT("newz")] = wxString::Format(wxT("%f"), m_cadmodel.getZsize());
         m_controlPanel->setDimension(dmap);
         m_modelCanvas->Refresh();
         m_pathCanvas->Refresh();
         m_controlPanel->setSliceInfo(m_paraMap);
-        if(m_cadmodel.m_sliced) {
+        if(m_cadmodel.isSliced()) {
             m_controlPanel->setNoLayer(m_cadmodel.getNoLayers());
             m_controlPanel->setCurrLayer(m_cadmodel.getCurrLayerIndex());
             m_statusbar->SetStatusText(wxT("sliced"), 0);
@@ -234,7 +234,7 @@ void CougarFrame::OnAbout(wxCommandEvent& event)
 
 void CougarFrame::OnSave(wxCommandEvent& event)
 {
-    if(!m_cadmodel.m_sliced) {
+    if(!m_cadmodel.isSliced()) {
         return;
     }
     

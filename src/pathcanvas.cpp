@@ -38,7 +38,7 @@ void Pathcanvas::OnSize(wxSizeEvent& event)
 
 void Pathcanvas::showPath()
 {
-    if(!m_cadmodel->m_sliced) {
+    if(!m_cadmodel->isSliced()) {
         return;
     }
 
@@ -47,7 +47,7 @@ void Pathcanvas::showPath()
     glLoadIdentity();
     
     double z = m_cadmodel->getCurrLayerHeight();
-    glTranslatef(-m_cadmodel->m_xcenter, -m_cadmodel->m_ycenter, -z);
+    glTranslatef(-m_cadmodel->getXcenter(), -m_cadmodel->getYcenter(), -z);
     int id = m_cadmodel->getCurrLayerGLList();
     glCallList(id);
 
@@ -55,7 +55,7 @@ void Pathcanvas::showPath()
 
 void Pathcanvas::setupProjection()
 {
-    double diameter = m_cadmodel->m_diameter;
+    double diameter = m_cadmodel->getDiameter();
     int w, h;
     GetClientSize(&w, &h);
     double half = diameter / 2;

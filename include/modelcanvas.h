@@ -15,7 +15,6 @@ public:
     void OnLeftDown(wxMouseEvent& event);
     void OnMouseEvent(wxMouseEvent& event);
     void OnEraseBackground(wxEraseEvent& event);
-    DECLARE_EVENT_TABLE()
 
 private:
     void setupProjection();
@@ -26,7 +25,8 @@ private:
     Cadmodel *m_cadmodel;
     int m_xangle;
     int m_yangle;
-
+    
+    DECLARE_EVENT_TABLE()
 };
 
 #endif
