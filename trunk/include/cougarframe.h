@@ -16,7 +16,6 @@ class CougarFrame: public wxFrame
 public:
     CougarFrame(const wxString& title);
 
-private:
     void OnOpen(wxCommandEvent& event);
     void OnSlice(wxCommandEvent& event);
     void OnNextLayer(wxCommandEvent& event);
@@ -24,21 +23,23 @@ private:
     void OnExit(wxCommandEvent& event);
     void OnAbout(wxCommandEvent& event);
     void OnSave(wxCommandEvent& event);
+
+private:
     void createMenu();
     void createControls();
     wxSplitterWindow* createSplitter();
     void createToolbar();
     
-    DECLARE_EVENT_TABLE()
-    
+    // data
     ControlPanel *m_controlPanel;
-    //
     Cadmodel m_cadmodel;
     Modelcanvas* m_modelCanvas;
     Pathcanvas* m_pathCanvas;
     std::map<wxString, wxString> m_paraMap;
     wxString m_filename;
     wxStatusBar *m_statusbar;
+    
+    DECLARE_EVENT_TABLE()
 };
 
 #endif

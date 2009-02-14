@@ -458,3 +458,48 @@ void Cadmodel::save(const wxString& filename)
     f << "  </layers>\n"
       << "</slice>\n";
 }
+
+double Cadmodel::getXsize()
+{
+    return m_xsize;
+}
+
+double Cadmodel::getYsize()
+{
+    return m_ysize;
+}
+
+double Cadmodel::getZsize()
+{
+    return m_zsize;
+}
+
+bool Cadmodel::isLoaded()
+{
+    return m_loaded;
+}
+
+bool Cadmodel::isSliced()
+{
+    return m_sliced;
+}
+
+double Cadmodel::getDiameter()
+{
+    return m_diameter;
+}
+
+double Cadmodel::getXcenter()
+{
+    return m_xcenter;
+}
+
+double Cadmodel::getYcenter()
+{
+    return m_ycenter;
+}
+
+double Cadmodel::getZcenter()
+{
+    return m_zcenter;
+}

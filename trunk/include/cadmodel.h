@@ -18,8 +18,25 @@ public:
     
     bool open(const wxString& filename);
     bool slice(double height, double pitch, double speed, const wxString& direction, double scale);
-    
+    void save(const wxString& filename);
     int createGLModellist();
+    int getCurrLayerGLList();
+    double getCurrLayerHeight();
+    void nextLayer();
+    void prevLayer();
+    int getNoLayers();
+    int getCurrLayerIndex();
+    double getXsize();
+    double getYsize();
+    double getZsize();
+    bool isLoaded();
+    bool isSliced();
+    double getDiameter();
+    double getXcenter();
+    double getYcenter();
+    double getZcenter();
+    
+private:
     bool getSolidline(wxTextFile& file);
     wxArrayString getLine(wxTextFile& file);
     Facet* getOneFacet(wxTextFile& file);
@@ -30,19 +47,11 @@ public:
     void getEndfacet(wxTextFile& file);
     void clearFacets(std::vector<Facet*>& facets);
     void calcDimension();
-
     void scaleModel(double scale);
     void createLayers();
-    int getCurrLayerGLList();
-    double getCurrLayerHeight();
-    void nextLayer();
-    void prevLayer();
-    int getNoLayers();
-    int getCurrLayerIndex();
-    void save(const wxString& filename);
-
     std::pair<int, Layer> createOnelayer(double z);
-
+    
+    // data
     bool m_loaded;
     bool m_sliced;
     wxString m_line;

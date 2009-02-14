@@ -13,12 +13,13 @@ public:
     void OnPaint(wxPaintEvent& event);
     void OnSize(wxSizeEvent& event);
     void OnEraseBackground(wxEraseEvent& event);
+
+private:
     void showPath();
     void setupProjection();
 
-    DECLARE_EVENT_TABLE()
-
     Cadmodel *m_cadmodel;
+    DECLARE_EVENT_TABLE()
 };
 
 #endif

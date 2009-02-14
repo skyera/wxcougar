@@ -6,14 +6,19 @@
 #include <fstream>
 #include "line.h"
 
+class Cadmodel;
+
 class Layer
 {
+    friend class Cadmodel;
 public:
     Layer(double z = 0.0, double pitch = 0.0);
     bool setLines(const std::vector<Line>& lines); 
+    void save(std::ofstream& f);
+
+private:
     bool createLoops();
     int createGLList();
-
     void moveLines(std::vector<Line>& loop);
     void mergeLines(std::vector<Line>& loop);
     void createScanlines();
@@ -25,8 +30,8 @@ public:
     bool isPeak(double y, const Point& point, const std::vector<Line>& loop);
     void createChunks();
     std::pair<bool, Line> getOverlapLine(const Line& line, std::vector<Line>& scanline);
-    void save(std::ofstream& f);
-
+    
+    // data
     double m_z;
     double m_pitch;
     std::vector<Line> m_lines;

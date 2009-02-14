@@ -51,7 +51,7 @@ void Modelcanvas::OnSize(wxSizeEvent& event)
 
 void Modelcanvas::setupProjection()
 {
-    double diameter = m_cadmodel->m_diameter;
+    double diameter = m_cadmodel->getDiameter();
     int w, h;
     GetClientSize(&w, &h);
     double half = diameter / 2;
@@ -82,7 +82,7 @@ void Modelcanvas::setupProjection()
 
 void Modelcanvas::showModel()
 {
-    if(!m_cadmodel->m_loaded) {
+    if(!m_cadmodel->isLoaded()) {
         return;
     }     
     
@@ -90,11 +90,11 @@ void Modelcanvas::showModel()
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    glTranslatef(0.0, 0.0, -m_cadmodel->m_diameter);
+    glTranslatef(0.0, 0.0, -m_cadmodel->getDiameter());
     glRotatef(m_xangle, 1, 0, 0);
     glRotatef(m_yangle, 0, 1, 1);
 
-    glTranslatef(-m_cadmodel->m_xcenter, -m_cadmodel->m_ycenter, -m_cadmodel->m_zcenter);
+    glTranslatef(-m_cadmodel->getXcenter(), -m_cadmodel->getYcenter(), -m_cadmodel->getZcenter());
     int gid = m_cadmodel->createGLModellist();
     glCallList(gid);
 }
@@ -156,7 +156,7 @@ void Modelcanvas::setupGLContext()
 
 void Modelcanvas::showPath()
 {
-    if(!m_cadmodel->m_sliced) {
+    if(!m_cadmodel->isSliced()) {
         return;
     }
 
