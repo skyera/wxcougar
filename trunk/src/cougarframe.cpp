@@ -1,14 +1,17 @@
 #include "cougarframe.h"
-#include "controlpanel.h"
+
 #include <iostream>
 #include <string>
+
 #include <wx/splitter.h>
-#include "modelcanvas.h"
 #include <wx/artprov.h>
-#include "paradialog.h"
-#include "pathcanvas.h"
 #include <wx/aboutdlg.h>
 #include <wx/filename.h>
+
+#include "modelcanvas.h"
+#include "paradialog.h"
+#include "pathcanvas.h"
+#include "controlpanel.h"
 
 using namespace std;
 
@@ -73,7 +76,7 @@ void CougarFrame::OnOpen(wxCommandEvent& event)
 {
     wxString caption = wxT("Open a STL cad file");
     wxString wildcard = wxT("STL files (*.stl)|*.stl|All files(*.*)|*.*");
-    wxFileDialog dlg(this, caption, wxT("."), wxEmptyString, wildcard, wxOPEN); 
+    wxFileDialog dlg(this, caption, wxGetCwd(), wxEmptyString, wildcard, wxOPEN); 
     if(dlg.ShowModal() == wxID_OK) {
         wxString filename = dlg.GetPath();    
         bool ok = m_cadmodel.open(filename);

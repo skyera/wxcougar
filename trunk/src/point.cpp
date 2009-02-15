@@ -1,6 +1,7 @@
 #include "point.h"
-#include <cmath>
 #include "utility.h"
+
+#include <cmath>
 
 using namespace std;
 using namespace cougar;

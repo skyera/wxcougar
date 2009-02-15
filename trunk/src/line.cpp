@@ -1,7 +1,8 @@
 #include "line.h"
+#include "utility.h"
+
 #include <limits>
 #include <cmath>
-#include "utility.h"
 
 using namespace std;
 using namespace cougar;

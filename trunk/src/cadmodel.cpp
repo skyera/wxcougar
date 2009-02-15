@@ -1,8 +1,8 @@
 #include "cadmodel.h"
 #include <wx/textfile.h>
+#include <wx/tokenzr.h>
 #include <iostream>
 #include <exception>
-#include <wx/tokenzr.h>
 #include <algorithm>
 #include <fstream>
 
