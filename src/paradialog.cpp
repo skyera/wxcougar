@@ -1,6 +1,7 @@
 #include "paradialog.h"
-#include <wx/choice.h>
 #include "charvalidator.h"
+
+#include <wx/choice.h>
 
 using namespace std;
 

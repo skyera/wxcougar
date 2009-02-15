@@ -1,11 +1,13 @@
 #include "layer.h"
-#include <wx/wx.h>
-#include <iostream>
-#include <wx/glcanvas.h>
 #include "utility.h"
+
+#include <wx/wx.h>
+#include <wx/glcanvas.h>
+
 #include <algorithm>
 #include <set>
 #include <cstdlib>
+#include <iostream>
 
 using namespace std;
 using namespace cougar;
