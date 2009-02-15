@@ -1,0 +1,8 @@
+This program has been compiled and tested under ubuntu Linux and Windows.
+
+Compile:
+  to compile this program, you need to have 
+  - bakefile (http://bakefile.sf.net)
+  - wxWidgets (http://www.wxwidgets.org)
+
+You can install vc++ 2008 express under Windows and use nmake to compile it.
