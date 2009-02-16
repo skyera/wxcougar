@@ -458,6 +458,11 @@ void Cadmodel::save(const wxString& filename)
     ofstream f(filename.mb_str());    
 
     f << "<slice>\n"
+      << "  <dimension>\n"
+      << "    <x>" << m_xsize << "</x>\n"
+      << "    <y>" << m_ysize << "</y>\n"
+      << "    <z>" << m_zsize << "</z>\n"
+      << "  </dimension>\n"
       << "  <para>\n"
       << "     <layerheight>" << m_height << "</layerheight>\n"
       << "     <layerpitch>" << m_pitch << "</layerpitch>\n"
