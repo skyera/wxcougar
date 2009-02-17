@@ -6,7 +6,7 @@ namespace cougar
 
 bool equal(double d1, double d2); 
 
-const int ERROR = 2;
+const int ERR = 2;
 const int REDO = 3;
 const int LAYER = 4;
 const int NOT_LAYER = 5;
