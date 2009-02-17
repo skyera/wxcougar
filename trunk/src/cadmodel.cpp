@@ -362,7 +362,7 @@ void Cadmodel::createLayers()
             m_layers.push_back(ret.second); 
             lastz = z;
             z += m_height;
-        }else if(cod == ERROR) {
+        }else if(cod == ERR) {
             break;
         } else if(cod == REDO) {
             z = z - m_height * 0.01; 
@@ -401,7 +401,7 @@ pair<int, Layer> Cadmodel::createOnelayer(double z)
             ret.first = LAYER;
             ret.second = layer;
         } else {
-            ret.first = ERROR;
+            ret.first = ERR;
         }
     } else {
         ret.first = NOT_LAYER;
