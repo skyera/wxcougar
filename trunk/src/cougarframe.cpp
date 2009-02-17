@@ -12,7 +12,6 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
-#include "cougarframe.h"
 
 #include <iostream>
 #include <string>
@@ -21,7 +20,9 @@
 #include <wx/artprov.h>
 #include <wx/aboutdlg.h>
 #include <wx/filename.h>
+#include <wx/busyinfo.h>
 
+#include "cougarframe.h"
 #include "modelcanvas.h"
 #include "paradialog.h"
 #include "pathcanvas.h"
@@ -196,7 +197,9 @@ void CougarFrame::OnSlice(wxCommandEvent& event)
         s_pitch.ToDouble(&pitch);
         s_speed.ToDouble(&speed);
         s_scale.ToDouble(&scale);
-
+        
+        wxWindowDisabler disableAll;
+        wxBusyInfo info(wxT("Slicing, please wait..."), this);
         m_cadmodel.slice(height, pitch, speed, s_direction, scale);
         
         map<wxString, wxString> dmap;
