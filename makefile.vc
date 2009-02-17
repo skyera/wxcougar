@@ -74,6 +74,28 @@ COUGAR_OBJECTS =  \
 	cougar_layer.obj \
 	cougar_pathcanvas.obj \
 	cougar_utility.obj
+TESTS_CXXFLAGS = /MD /DWIN32 $(__WXUNICODE_DEFINE_p) $(__WXDEBUG_DEFINE_p) \
+	/D__WXMSW__ /I$(WX_DIR)$(__WXLIBPATH_FILENAMES)\msw$(WXLIBPOSTFIX) \
+	/I$(WX_DIR)\include /Iinclude /D_CONSOLE /GR /EHsc $(CPPFLAGS) $(CXXFLAGS)
+TESTS_OBJECTS =  \
+	tests_tests.obj \
+	tests_testfacet.obj \
+	tests_testpoint.obj \
+	tests_testline.obj \
+	tests_testlayer.obj \
+	tests_testcadmodel.obj \
+	tests_facet.obj \
+	tests_cadmodel.obj \
+	tests_point.obj \
+	tests_line.obj \
+	tests_layer.obj \
+	tests_utility.obj \
+	tests_cougarframe.obj \
+	tests_controlpanel.obj \
+	tests_modelcanvas.obj \
+	tests_pathcanvas.obj \
+	tests_paradialog.obj \
+	tests_charvalidator.obj
 
 ### Conditionally set variables: ###
 
@@ -92,21 +114,6 @@ __WXDEBUG_DEFINE_p = /D__WXDEBUG__
 !if "$(WX_PYTHON)" == "1"
 __WXDEBUG_DEFINE_p = /D__WXDEBUG__
 !endif
-!if "$(WX_MONOLITHIC)" == "0"
-__WXLIB_GL_NAME_p = wxmsw$(WX_VERSION)$(WXLIBPOSTFIX)_gl.lib
-!endif
-!if "$(WX_MONOLITHIC)" == "0"
-__WXLIB_ADV_NAME_p = wxmsw$(WX_VERSION)$(WXLIBPOSTFIX)_adv.lib
-!endif
-!if "$(WX_MONOLITHIC)" == "0"
-__WXLIB_CORE_NAME_p = wxmsw$(WX_VERSION)$(WXLIBPOSTFIX)_core.lib
-!endif
-!if "$(WX_MONOLITHIC)" == "0"
-__WXLIB_BASE_NAME_p = wxbase$(WX_VERSION)$(WXLIBPOSTFIX).lib
-!endif
-!if "$(WX_MONOLITHIC)" == "1"
-__WXLIB_BASE_NAME_p = wxmsw$(WX_VERSION)$(WXLIBPOSTFIX).lib
-!endif
 !if "$(WX_DEBUG)" == "0" && "$(WX_PYTHON)" == "0" && "$(WX_UNICODE)" == "1"
 WXLIBPOSTFIX = u
 !endif
@@ -122,6 +129,21 @@ WXLIBPOSTFIX = h
 !if "$(WX_PYTHON)" == "1" && "$(WX_UNICODE)" == "1"
 WXLIBPOSTFIX = uh
 !endif
+!if "$(WX_MONOLITHIC)" == "0"
+__WXLIB_GL_NAME_p = wxmsw$(WX_VERSION)$(WXLIBPOSTFIX)_gl.lib
+!endif
+!if "$(WX_MONOLITHIC)" == "0"
+__WXLIB_ADV_NAME_p = wxmsw$(WX_VERSION)$(WXLIBPOSTFIX)_adv.lib
+!endif
+!if "$(WX_MONOLITHIC)" == "0"
+__WXLIB_CORE_NAME_p = wxmsw$(WX_VERSION)$(WXLIBPOSTFIX)_core.lib
+!endif
+!if "$(WX_MONOLITHIC)" == "0"
+__WXLIB_BASE_NAME_p = wxbase$(WX_VERSION)$(WXLIBPOSTFIX).lib
+!endif
+!if "$(WX_MONOLITHIC)" == "1"
+__WXLIB_BASE_NAME_p = wxmsw$(WX_VERSION)$(WXLIBPOSTFIX).lib
+!endif
 !if "$(WX_SHARED)" == "0"
 __WXLIBPATH_FILENAMES = \lib\vc_lib
 !endif
@@ -132,7 +154,7 @@ __WXLIBPATH_FILENAMES = \lib\vc_dll
 
 ### Targets: ###
 
-all: cougar.exe
+all: cougar.exe tests.exe
 
 clean: 
 	-if exist .\*.obj del .\*.obj
@@ -141,10 +163,18 @@ clean:
 	-if exist cougar.exe del cougar.exe
 	-if exist cougar.ilk del cougar.ilk
 	-if exist cougar.pdb del cougar.pdb
+	-if exist tests.exe del tests.exe
+	-if exist tests.ilk del tests.ilk
+	-if exist tests.pdb del tests.pdb
 
 cougar.exe: $(COUGAR_OBJECTS)
 	link /NOLOGO /OUT:$@ $(LDFLAGS) /LIBPATH:$(WX_DIR)$(__WXLIBPATH_FILENAMES) /SUBSYSTEM:WINDOWS @<<
 	$(COUGAR_OBJECTS)  $(__WXLIB_GL_NAME_p) $(__WXLIB_ADV_NAME_p) $(__WXLIB_CORE_NAME_p) $(__WXLIB_BASE_NAME_p) wxtiff$(WX3RDPARTYLIBPOSTFIX).lib wxjpeg$(WX3RDPARTYLIBPOSTFIX).lib wxpng$(WX3RDPARTYLIBPOSTFIX).lib wxzlib$(WX3RDPARTYLIBPOSTFIX).lib wxregex$(WXLIBPOSTFIX).lib wxexpat$(WX3RDPARTYLIBPOSTFIX).lib kernel32.lib user32.lib gdi32.lib comdlg32.lib winspool.lib winmm.lib shell32.lib comctl32.lib ole32.lib oleaut32.lib uuid.lib rpcrt4.lib advapi32.lib wsock32.lib odbc32.lib oleacc.lib
+<<
+
+tests.exe: $(TESTS_OBJECTS)
+	link /NOLOGO /OUT:$@ $(LDFLAGS) /LIBPATH:$(WX_DIR)$(__WXLIBPATH_FILENAMES) /SUBSYSTEM:CONSOLE @<<
+	$(TESTS_OBJECTS)  $(__WXLIB_GL_NAME_p) $(__WXLIB_ADV_NAME_p) $(__WXLIB_CORE_NAME_p) $(__WXLIB_BASE_NAME_p) wxtiff$(WX3RDPARTYLIBPOSTFIX).lib wxjpeg$(WX3RDPARTYLIBPOSTFIX).lib wxpng$(WX3RDPARTYLIBPOSTFIX).lib wxzlib$(WX3RDPARTYLIBPOSTFIX).lib wxregex$(WXLIBPOSTFIX).lib wxexpat$(WX3RDPARTYLIBPOSTFIX).lib kernel32.lib user32.lib gdi32.lib comdlg32.lib winspool.lib winmm.lib shell32.lib comctl32.lib ole32.lib oleaut32.lib uuid.lib rpcrt4.lib advapi32.lib wsock32.lib odbc32.lib oleacc.lib
 <<
 
 cougar_cougarapp.obj: .\src\cougarapp.cpp
@@ -185,4 +215,58 @@ cougar_pathcanvas.obj: .\src\pathcanvas.cpp
 
 cougar_utility.obj: .\src\utility.cpp
 	$(CXX) /c /nologo /TP /Fo$@ $(COUGAR_CXXFLAGS) .\src\utility.cpp
+
+tests_tests.obj: .\test\tests.cpp
+	$(CXX) /c /nologo /TP /Fo$@ $(TESTS_CXXFLAGS) .\test\tests.cpp
+
+tests_testfacet.obj: .\test\testfacet.cpp
+	$(CXX) /c /nologo /TP /Fo$@ $(TESTS_CXXFLAGS) .\test\testfacet.cpp
+
+tests_testpoint.obj: .\test\testpoint.cpp
+	$(CXX) /c /nologo /TP /Fo$@ $(TESTS_CXXFLAGS) .\test\testpoint.cpp
+
+tests_testline.obj: .\test\testline.cpp
+	$(CXX) /c /nologo /TP /Fo$@ $(TESTS_CXXFLAGS) .\test\testline.cpp
+
+tests_testlayer.obj: .\test\testlayer.cpp
+	$(CXX) /c /nologo /TP /Fo$@ $(TESTS_CXXFLAGS) .\test\testlayer.cpp
+
+tests_testcadmodel.obj: .\test\testcadmodel.cpp
+	$(CXX) /c /nologo /TP /Fo$@ $(TESTS_CXXFLAGS) .\test\testcadmodel.cpp
+
+tests_facet.obj: .\src\facet.cpp
+	$(CXX) /c /nologo /TP /Fo$@ $(TESTS_CXXFLAGS) .\src\facet.cpp
+
+tests_cadmodel.obj: .\src\cadmodel.cpp
+	$(CXX) /c /nologo /TP /Fo$@ $(TESTS_CXXFLAGS) .\src\cadmodel.cpp
+
+tests_point.obj: .\src\point.cpp
+	$(CXX) /c /nologo /TP /Fo$@ $(TESTS_CXXFLAGS) .\src\point.cpp
+
+tests_line.obj: .\src\line.cpp
+	$(CXX) /c /nologo /TP /Fo$@ $(TESTS_CXXFLAGS) .\src\line.cpp
+
+tests_layer.obj: .\src\layer.cpp
+	$(CXX) /c /nologo /TP /Fo$@ $(TESTS_CXXFLAGS) .\src\layer.cpp
+
+tests_utility.obj: .\src\utility.cpp
+	$(CXX) /c /nologo /TP /Fo$@ $(TESTS_CXXFLAGS) .\src\utility.cpp
+
+tests_cougarframe.obj: .\src\cougarframe.cpp
+	$(CXX) /c /nologo /TP /Fo$@ $(TESTS_CXXFLAGS) .\src\cougarframe.cpp
+
+tests_controlpanel.obj: .\src\controlpanel.cpp
+	$(CXX) /c /nologo /TP /Fo$@ $(TESTS_CXXFLAGS) .\src\controlpanel.cpp
+
+tests_modelcanvas.obj: .\src\modelcanvas.cpp
+	$(CXX) /c /nologo /TP /Fo$@ $(TESTS_CXXFLAGS) .\src\modelcanvas.cpp
+
+tests_pathcanvas.obj: .\src\pathcanvas.cpp
+	$(CXX) /c /nologo /TP /Fo$@ $(TESTS_CXXFLAGS) .\src\pathcanvas.cpp
+
+tests_paradialog.obj: .\src\paradialog.cpp
+	$(CXX) /c /nologo /TP /Fo$@ $(TESTS_CXXFLAGS) .\src\paradialog.cpp
+
+tests_charvalidator.obj: .\src\charvalidator.cpp
+	$(CXX) /c /nologo /TP /Fo$@ $(TESTS_CXXFLAGS) .\src\charvalidator.cpp
 
