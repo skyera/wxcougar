@@ -52,6 +52,16 @@ COUGAR_OBJECTS =  \
 	cougar_layer.o \
 	cougar_pathcanvas.o \
 	cougar_utility.o
+TESTS_CXXFLAGS =  -Iinclude  $(WX_CXXFLAGS) $(CPPFLAGS) $(CXXFLAGS)
+TESTS_OBJECTS =  \
+	tests_main.o \
+	tests_testfacet.o \
+	tests_facet.o \
+	tests_cadmodel.o \
+	tests_point.o \
+	tests_line.o \
+	tests_layer.o \
+	tests_utility.o
 
 ### Conditionally set variables: ###
 
@@ -59,7 +69,7 @@ COUGAR_OBJECTS =  \
 
 ### Targets: ###
 
-all: cougar
+all: cougar tests
 
 install: all
 
@@ -69,9 +79,13 @@ clean:
 	rm -f ./*.o
 	rm -f ./*.d
 	rm -f cougar
+	rm -f tests
 
 cougar: $(COUGAR_OBJECTS)
 	$(CXX) -o $@ $(COUGAR_OBJECTS) $(LDFLAGS)  `$(WX_CONFIG) --libs gl,adv,core,base`
+
+tests: $(TESTS_OBJECTS)
+	$(CXX) -o $@ $(TESTS_OBJECTS) $(LDFLAGS)  `$(WX_CONFIG) --libs gl,adv,core,base`
 
 cougar_cougarapp.o: ./src/cougarapp.cpp
 	$(CXX) -c -o $@ $(COUGAR_CXXFLAGS) $(CPPDEPS) $<
@@ -111,6 +125,30 @@ cougar_pathcanvas.o: ./src/pathcanvas.cpp
 
 cougar_utility.o: ./src/utility.cpp
 	$(CXX) -c -o $@ $(COUGAR_CXXFLAGS) $(CPPDEPS) $<
+
+tests_main.o: ./test/main.cpp
+	$(CXX) -c -o $@ $(TESTS_CXXFLAGS) $(CPPDEPS) $<
+
+tests_testfacet.o: ./test/testfacet.cpp
+	$(CXX) -c -o $@ $(TESTS_CXXFLAGS) $(CPPDEPS) $<
+
+tests_facet.o: ./src/facet.cpp
+	$(CXX) -c -o $@ $(TESTS_CXXFLAGS) $(CPPDEPS) $<
+
+tests_cadmodel.o: ./src/cadmodel.cpp
+	$(CXX) -c -o $@ $(TESTS_CXXFLAGS) $(CPPDEPS) $<
+
+tests_point.o: ./src/point.cpp
+	$(CXX) -c -o $@ $(TESTS_CXXFLAGS) $(CPPDEPS) $<
+
+tests_line.o: ./src/line.cpp
+	$(CXX) -c -o $@ $(TESTS_CXXFLAGS) $(CPPDEPS) $<
+
+tests_layer.o: ./src/layer.cpp
+	$(CXX) -c -o $@ $(TESTS_CXXFLAGS) $(CPPDEPS) $<
+
+tests_utility.o: ./src/utility.cpp
+	$(CXX) -c -o $@ $(TESTS_CXXFLAGS) $(CPPDEPS) $<
 
 .PHONY: all install uninstall clean
 

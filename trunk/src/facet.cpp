@@ -18,9 +18,8 @@
 using namespace std;
 using namespace cougar;
 
-namespace {
 
-bool isIntersect(const Point& p1, const Point& p2, double z)
+bool Facet::isIntersect(const Point& p1, const Point& p2, double z)
 {
     double val = (p1.z - z) * (p2.z - z);
     if(val <= 0.0) {
@@ -30,13 +29,13 @@ bool isIntersect(const Point& p1, const Point& p2, double z)
     }
 }
 
-double intersect(double x1, double y1, double x2, double y2, double x)
+double Facet::intersect(double x1, double y1, double x2, double y2, double x)
 {
     double y = (y2 - y1) / (x2 - x1) * (x - x1) + y1;
     return y;
 }
 
-Point calcIntersect(const Point& p1, const Point& p2, double z)
+Point Facet::calcIntersect(const Point& p1, const Point& p2, double z)
 {
     double x1 = p1.x;
     double y1 = p1.y;
@@ -51,8 +50,6 @@ Point calcIntersect(const Point& p1, const Point& p2, double z)
     
     Point p(x, y, z);
     return p;
-}
-
 }
 
 Facet::Facet(const Point& normal, const std::vector<Point>& pts):normal(normal), points(pts)
@@ -83,20 +80,17 @@ void Facet::changeDirection(const wxString& direction)
             swap(point.x, point.z);
         }
     } else if(direction == wxT("-X")) {
-        
         for(vector<Point>::iterator it = points.begin(); it != points.end(); it++) {
             Point& point = *it;    
             swap(point.x, point.z);
             point.z = -point.z;
         }
     } else if(direction == wxT("+Y")) {
-        
         for(vector<Point>::iterator it = points.begin(); it != points.end(); it++) {
             Point& point = *it;    
             swap(point.y, point.z);
         }
     } else if(direction == wxT("-Y")) {
-    
         for(vector<Point>::iterator it = points.begin(); it != points.end(); it++) {
             Point& point = *it;    
             swap(point.y, point.z);

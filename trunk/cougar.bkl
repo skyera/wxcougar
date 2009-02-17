@@ -23,4 +23,24 @@
         <wx-lib> core </wx-lib>
         <wx-lib> base </wx-lib>
     </exe>
+
+    <exe id="tests" template="wx">
+        <include>include</include>
+        <app-type>console</app-type>
+        <sources> test/main.cpp</sources>
+        <sources> test/testfacet.cpp</sources>
+
+        <sources> src/facet.cpp </sources>
+        <sources> src/cadmodel.cpp </sources>
+        <sources> src/point.cpp </sources>
+        <sources> src/line.cpp </sources>
+        <sources> src/layer.cpp </sources>
+        <sources> src/utility.cpp </sources>
+
+        <wx-lib> gl </wx-lib>
+        <wx-lib> adv </wx-lib>
+        <wx-lib> core </wx-lib>
+        <wx-lib> base </wx-lib>
+ 
+    </exe>
 </makefile>
