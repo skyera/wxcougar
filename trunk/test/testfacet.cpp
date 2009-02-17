@@ -42,10 +42,11 @@ void object::test<2>()
 {
     
     Point p1(0, 0, 1);
-    Point p2(4, 4, 4);
+    Point p2(0, 0, 4);
     
     Point p = Facet::calcIntersect(p1, p2, 1);
-
+    bool ok = (p == Point(0, 0, 1));
+    ensure(ok);
 }
 
 }

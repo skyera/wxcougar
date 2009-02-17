@@ -27,8 +27,12 @@
     <exe id="tests" template="wx">
         <include>include</include>
         <app-type>console</app-type>
-        <sources> test/main.cpp</sources>
+        <sources> test/tests.cpp</sources>
         <sources> test/testfacet.cpp</sources>
+        <sources> test/testpoint.cpp</sources>
+        <sources> test/testline.cpp</sources>
+        <sources> test/testlayer.cpp</sources>
+        <sources> test/testcadmodel.cpp</sources>
 
         <sources> src/facet.cpp </sources>
         <sources> src/cadmodel.cpp </sources>

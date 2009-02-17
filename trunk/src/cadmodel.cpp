@@ -24,6 +24,7 @@
 
 using namespace std;
 using namespace cougar;
+
 class EofError: public exception
 {
 public:

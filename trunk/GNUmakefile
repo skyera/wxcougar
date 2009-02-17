@@ -54,8 +54,12 @@ COUGAR_OBJECTS =  \
 	cougar_utility.o
 TESTS_CXXFLAGS =  -Iinclude  $(WX_CXXFLAGS) $(CPPFLAGS) $(CXXFLAGS)
 TESTS_OBJECTS =  \
-	tests_main.o \
+	tests_tests.o \
 	tests_testfacet.o \
+	tests_testpoint.o \
+	tests_testline.o \
+	tests_testlayer.o \
+	tests_testcadmodel.o \
 	tests_facet.o \
 	tests_cadmodel.o \
 	tests_point.o \
@@ -126,10 +130,22 @@ cougar_pathcanvas.o: ./src/pathcanvas.cpp
 cougar_utility.o: ./src/utility.cpp
 	$(CXX) -c -o $@ $(COUGAR_CXXFLAGS) $(CPPDEPS) $<
 
-tests_main.o: ./test/main.cpp
+tests_tests.o: ./test/tests.cpp
 	$(CXX) -c -o $@ $(TESTS_CXXFLAGS) $(CPPDEPS) $<
 
 tests_testfacet.o: ./test/testfacet.cpp
+	$(CXX) -c -o $@ $(TESTS_CXXFLAGS) $(CPPDEPS) $<
+
+tests_testpoint.o: ./test/testpoint.cpp
+	$(CXX) -c -o $@ $(TESTS_CXXFLAGS) $(CPPDEPS) $<
+
+tests_testline.o: ./test/testline.cpp
+	$(CXX) -c -o $@ $(TESTS_CXXFLAGS) $(CPPDEPS) $<
+
+tests_testlayer.o: ./test/testlayer.cpp
+	$(CXX) -c -o $@ $(TESTS_CXXFLAGS) $(CPPDEPS) $<
+
+tests_testcadmodel.o: ./test/testcadmodel.cpp
 	$(CXX) -c -o $@ $(TESTS_CXXFLAGS) $(CPPDEPS) $<
 
 tests_facet.o: ./src/facet.cpp
