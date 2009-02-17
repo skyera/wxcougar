@@ -14,6 +14,7 @@
 
 #include "controlpanel.h"
 #include <wx/stattext.h>
+#include <wx/statbmp.h>
 
 using namespace std;
 
@@ -31,9 +32,13 @@ void ControlPanel::createControls()
     
     wxSizer *sizer3 = createDimensions();
     sizer2->Add(sizer3, 0, wxALL|wxEXPAND|wxALIGN_CENTER, 2);
-    sizer2->AddStretchSpacer(); 
     wxSizer *sizer4 = createSliceInfo();
     sizer2->Add(sizer4, 0, wxALL|wxEXPAND|wxALIGN_CENTER, 2);
+    
+    sizer2->AddStretchSpacer();
+    wxBitmap bmp(wxT("flower.jpg"));
+    wxStaticBitmap *staticbmp = new wxStaticBitmap(this, -1, bmp);
+    sizer2->Add(staticbmp, 0, wxALIGN_CENTER_HORIZONTAL, 10);
 }
 
 wxSizer* ControlPanel::createDimensions()
