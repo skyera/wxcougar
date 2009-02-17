@@ -113,10 +113,6 @@ void Facet::changeDirection(const wxString& direction)
     } 
 }
 
-// 
-// return -1: error
-//         0: no intersection
-//         1: intersected
 pair<int, Line> Facet::intersect(double z)
 {
     pair<int, Line> p;
@@ -133,7 +129,7 @@ pair<int, Line> Facet::intersect(double z)
     }
     
     if(c1 == 3 || c2 == 3) {
-        p.first = 0;
+        p.first = NOT_INTERSECTED;
         return p;
     } 
     
@@ -153,7 +149,7 @@ pair<int, Line> Facet::intersect(double z)
     if(n == 0) {
         Line line = intersect_0(z); 
         p.second = line;
-        p.first = 1;
+        p.first = INTERSECTED;
     } else if(n == 1) {
         Point p1 = pv[0];
         Point p2 = pv[1];
@@ -161,12 +157,12 @@ pair<int, Line> Facet::intersect(double z)
             Point ap = calcIntersect(p1, p2, z);     
             Line line(pe, ap);
             p.second = line;
-            p.first = 1;
+            p.first = INTERSECTED;
         } else {
-             p.first = 0; 
+             p.first = NOT_INTERSECTED;
         }
     } else if(n == 2 || n == 3){
-        p.first = -1; 
+        p.first = REDO;
     } 
 
     return p;
