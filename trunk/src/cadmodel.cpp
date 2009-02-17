@@ -12,7 +12,6 @@
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
-#include "cadmodel.h"
 #include <wx/textfile.h>
 #include <wx/tokenzr.h>
 #include <iostream>
@@ -20,8 +19,11 @@
 #include <algorithm>
 #include <fstream>
 
-using namespace std;
+#include "cadmodel.h"
+#include "utility.h"
 
+using namespace std;
+using namespace cougar;
 class EofError: public exception
 {
 public:
@@ -354,21 +356,21 @@ void Cadmodel::createLayers()
     while(z < m_maxz) {
         pair<int, Layer> ret = createOnelayer(z); 
         int cod  = ret.first;
-        if(cod == 1) {
+        if(cod == LAYER) {
             count++;
             ret.second.m_id = count;
             m_layers.push_back(ret.second); 
             lastz = z;
             z += m_height;
-        }else if(cod == 2) {
+        }else if(cod == ERROR) {
             break;
-        } else if(cod == 3) {
+        } else if(cod == REDO) {
             z = z - m_height * 0.01; 
             if(z < lastz) {
                 break;
             }
             cout << "recreate layer\n";
-        } else {
+        } else { // NOT_LAYER
             lastz = z;
             z += m_height;
         }
@@ -376,10 +378,6 @@ void Cadmodel::createLayers()
     cout << "no of layers:" << m_layers.size() << endl;
 }
 
-// code 0 - empty
-//      1 - new layer
-//      2 - error
-//      3 - redo
 pair<int, Layer> Cadmodel::createOnelayer(double z)
 {
     pair<int, Layer> ret;
@@ -388,10 +386,10 @@ pair<int, Layer> Cadmodel::createOnelayer(double z)
         Facet *facet = *it;
         pair<int, Line> p = facet->intersect(z);
         int code = p.first;
-        if(code == -1) {
-            ret.first = 3;
+        if(code == REDO) {
+            ret.first = REDO;
             return ret;
-        } else if(code == 1) {
+        } else if(code == INTERSECTED) {
             lines.push_back(p.second); 
         }
     } 
@@ -400,13 +398,13 @@ pair<int, Layer> Cadmodel::createOnelayer(double z)
         Layer layer(z, m_pitch);
         bool ok = layer.setLines(lines);
         if(ok) {
-            ret.first = 1;
+            ret.first = LAYER;
             ret.second = layer;
         } else {
-            ret.first = 2;
+            ret.first = ERROR;
         }
     } else {
-        ret.first = 0;
+        ret.first = NOT_LAYER;
     }
 
     return ret;

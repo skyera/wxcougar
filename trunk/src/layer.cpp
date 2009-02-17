@@ -205,10 +205,10 @@ void Layer::createScanlines()
     while(y < m_maxy) {
         pair<int, vector<Line> > pair = createOneScanline(y); 
         int code = pair.first;
-        if(code == 0) {
+        if(code == NOT_SCANLINE) {
             lasty = y;
             y += m_pitch;
-        } else if(code == 1) {
+        } else if(code == SCANLINE) {
             m_scanlines.push_back(pair.second); 
             lasty = y;
             y += m_pitch;
@@ -222,10 +222,6 @@ void Layer::createScanlines()
     }
 }
 
-
-// code 0: no scan line
-//      1: scan line
-//      2: error (redo)
 pair<int, vector<Line> > Layer::createOneScanline(double y)
 {
     set<wxString> xset;
@@ -235,12 +231,12 @@ pair<int, vector<Line> > Layer::createOneScanline(double y)
         for(vector<Line>::iterator lit = loop.begin(); lit != loop.end(); lit++) {
             pair<int, double> pair = intersect(y, *lit, loop);
             int code = pair.first;
-            if(code == 1) {
+            if(code == INTERSECTED) {
                 double x = pair.second;
                 wxString s = wxString::Format(wxT("%.6f"), x);
                 xset.insert(s);
-            } else if(code == 2) {
-                ret.first = 2;
+            } else if(code == REDO) {
+                ret.first = REDO;
                 return ret;
             } 
         }
@@ -267,10 +263,10 @@ pair<int, vector<Line> > Layer::createOneScanline(double y)
             Line line(p1, p2);
             lines.push_back(line);
         }
-        ret.first = 1;
+        ret.first = SCANLINE;
         ret.second = lines; 
     } else {
-        ret.first = 0;
+        ret.first = NOT_SCANLINE;
     }
     return ret;
 }
@@ -298,22 +294,22 @@ pair<int, double> Layer::intersect(double y, const Line& line, const vector<Line
         }
 
         if(count == 0) {
-            ret.first =  1;
+            ret.first =  INTERSECTED;
             double x = intersect_0(y, line); 
             ret.second = x;
         } else if(count == 1) {
             bool peak = isPeak(y, p, loop); 
             if(peak) {
-                ret.first = 0;
+                ret.first = NOT_INTERSECTED;
             } else {
-                ret.first = 1;
+                ret.first = INTERSECTED;
                 ret.second = p.x;
             }
         } else {
-            ret.first = 2; 
+            ret.first = REDO; 
         }
     } else {
-        ret.first = 0;
+        ret.first = NOT_INTERSECTED;
     }
     return ret;
 }
