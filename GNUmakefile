@@ -65,7 +65,13 @@ TESTS_OBJECTS =  \
 	tests_point.o \
 	tests_line.o \
 	tests_layer.o \
-	tests_utility.o
+	tests_utility.o \
+	tests_cougarframe.o \
+	tests_controlpanel.o \
+	tests_modelcanvas.o \
+	tests_pathcanvas.o \
+	tests_paradialog.o \
+	tests_charvalidator.o
 
 ### Conditionally set variables: ###
 
@@ -164,6 +170,24 @@ tests_layer.o: ./src/layer.cpp
 	$(CXX) -c -o $@ $(TESTS_CXXFLAGS) $(CPPDEPS) $<
 
 tests_utility.o: ./src/utility.cpp
+	$(CXX) -c -o $@ $(TESTS_CXXFLAGS) $(CPPDEPS) $<
+
+tests_cougarframe.o: ./src/cougarframe.cpp
+	$(CXX) -c -o $@ $(TESTS_CXXFLAGS) $(CPPDEPS) $<
+
+tests_controlpanel.o: ./src/controlpanel.cpp
+	$(CXX) -c -o $@ $(TESTS_CXXFLAGS) $(CPPDEPS) $<
+
+tests_modelcanvas.o: ./src/modelcanvas.cpp
+	$(CXX) -c -o $@ $(TESTS_CXXFLAGS) $(CPPDEPS) $<
+
+tests_pathcanvas.o: ./src/pathcanvas.cpp
+	$(CXX) -c -o $@ $(TESTS_CXXFLAGS) $(CPPDEPS) $<
+
+tests_paradialog.o: ./src/paradialog.cpp
+	$(CXX) -c -o $@ $(TESTS_CXXFLAGS) $(CPPDEPS) $<
+
+tests_charvalidator.o: ./src/charvalidator.cpp
 	$(CXX) -c -o $@ $(TESTS_CXXFLAGS) $(CPPDEPS) $<
 
 .PHONY: all install uninstall clean
