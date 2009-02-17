@@ -40,6 +40,12 @@
         <sources> src/line.cpp </sources>
         <sources> src/layer.cpp </sources>
         <sources> src/utility.cpp </sources>
+        <sources> src/cougarframe.cpp </sources>
+        <sources> src/controlpanel.cpp </sources>
+        <sources> src/modelcanvas.cpp </sources>
+        <sources> src/pathcanvas.cpp </sources>
+        <sources> src/paradialog.cpp </sources>
+        <sources> src/charvalidator.cpp </sources>
 
         <wx-lib> gl </wx-lib>
         <wx-lib> adv </wx-lib>
