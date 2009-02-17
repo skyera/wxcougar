@@ -36,7 +36,7 @@ void ControlPanel::createControls()
     sizer2->Add(sizer4, 0, wxALL|wxEXPAND|wxALIGN_CENTER, 2);
     
     sizer2->AddStretchSpacer();
-    wxBitmap bmp(wxT("flower.jpg"));
+    wxBitmap bmp(wxT("flower.bmp"), wxBITMAP_TYPE_BMP);
     wxStaticBitmap *staticbmp = new wxStaticBitmap(this, -1, bmp);
     sizer2->Add(staticbmp, 0, wxALIGN_CENTER_HORIZONTAL, 10);
 }
