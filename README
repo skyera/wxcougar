@@ -5,4 +5,8 @@ Compile:
   - bakefile (http://bakefile.sf.net)
   - wxWidgets (http://www.wxwidgets.org)
 
+release build:
+ nmake -f makefile.vc DEBUG=0 WX_DEBUG=0
+
 You can install vc++ 2008 express under Windows and use nmake to compile it.
+

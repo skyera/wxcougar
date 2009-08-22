@@ -1,5 +1,11 @@
 <?xml version="1.0" ?>
 <makefile>
+    <option name="DEBUG">
+        <value>0,1</value>
+        <default-value>0</default-value>
+        <values-description>Release,Debug</values-description>
+        <description>Set to 1 to build debug version</description>
+    </option>
     <include file="presets/wx.bkl"/>
     <exe id="cougar" template="wx">
         <include>include</include>
