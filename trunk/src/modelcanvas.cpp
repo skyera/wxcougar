@@ -58,8 +58,10 @@ void Modelcanvas::OnSize(wxSizeEvent& event)
     wxGLCanvas::OnSize(event);
     int w, h;
     GetClientSize(&w, &h);
-    SetCurrent();
+    if(GetContext()) {
+        SetCurrent();
     glViewport(0, 0, w, h);
+    }
     Refresh(false);
 }
 
