@@ -45,8 +45,10 @@ void Pathcanvas::OnSize(wxSizeEvent& event)
     wxGLCanvas::OnSize(event);
     int w, h;
     GetClientSize(&w, &h);
-    SetCurrent();
-    glViewport(0, 0, w, h);
+    if(GetContext()) {
+        SetCurrent();
+        glViewport(0, 0, w, h);
+    }
     Refresh(false);
 }
 
