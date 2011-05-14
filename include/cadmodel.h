@@ -52,36 +52,36 @@ private:
     std::pair<int, Layer> createOnelayer(double z);
     
     // data
-    bool m_loaded;
-    bool m_sliced;
-    wxString m_line;
-    std::vector<Facet*> m_facets;
-    std::vector<Facet*> m_oldfacets;
-    std::vector<Layer> m_layers;
+    bool loaded_;
+    bool sliced_;
+    wxString line_;
+    std::vector<Facet*> facets_;
+    std::vector<Facet*> oldfacets_;
+    std::vector<Layer> layers_;
 
-    double m_xsize;
-    double m_ysize;
-    double m_zsize;
-    double m_xcenter;
-    double m_ycenter;
-    double m_zcenter;
-    double m_diameter;
+    double xsize_;
+    double ysize_;
+    double zsize_;
+    double xcenter_;
+    double ycenter_;
+    double zcenter_;
+    double diameter_;
     
     // Slice parameters
-    double m_scale;
-    double m_height;
-    double m_pitch;
-    double m_speed;
-    wxString m_direction;
+    double scale_;
+    double height_;
+    double pitch_;
+    double speed_;
+    wxString direction_;
 
-    double m_minx;
-    double m_maxx;
-    double m_miny;
-    double m_maxy;
-    double m_minz;
-    double m_maxz;
+    double minx_;
+    double maxx_;
+    double miny_;
+    double maxy_;
+    double minz_;
+    double maxz_;
 
-    int m_currLayer;
+    int curr_layer_;
 };
 
 #endif

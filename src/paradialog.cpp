@@ -19,8 +19,8 @@
 
 using namespace std;
 
-ParaDialog::ParaDialog(wxWindow *parent, wxWindowID id, const wxString& title, map<wxString, wxString>& paraMap)
-    :wxDialog(parent, id, title),m_paraMap(paraMap)
+ParaDialog::ParaDialog(wxWindow *parent, wxWindowID id, const wxString& title, map<wxString, wxString>& param_map)
+    :wxDialog(parent, id, title),param_map_(param_map)
 {
     createControls();
 }
@@ -35,7 +35,7 @@ void ParaDialog::createControls()
     wxString lbls[] = {wxT("height"), wxT("pitch"), wxT("speed"), wxT("direction"), wxT("scale")};
     for(int i = 0; i < 5; i++) {
         wxString key = lbls[i];
-        wxString val = m_paraMap[key];
+        wxString val = param_map_[key];
         
         wxStaticText *label = new wxStaticText(this, -1, key);
         flex->Add(label);
@@ -47,14 +47,14 @@ void ParaDialog::createControls()
             strs.Add(wxT("-Y"));
             strs.Add(wxT("+Z"));
             strs.Add(wxT("-Z"));
-            m_choice = new wxChoice(this, -1, wxDefaultPosition, wxDefaultSize, strs);             
-            m_choice->SetStringSelection(val);
-            flex->Add(m_choice,0, wxEXPAND);
+            choice_ = new wxChoice(this, -1, wxDefaultPosition, wxDefaultSize, strs);             
+            choice_->SetStringSelection(val);
+            flex->Add(choice_,0, wxEXPAND);
         } else {
             wxTextCtrl *txtCtrl = new wxTextCtrl(this, -1, val, wxDefaultPosition, wxSize(80, -1)); 
             flex->Add(txtCtrl, 0, wxEXPAND);
             
-            CharValidator valid(key, m_paraMap);
+            CharValidator valid(key, param_map_);
             txtCtrl->SetValidator(valid);
         }
         
@@ -78,5 +78,5 @@ void ParaDialog::createControls()
 
 wxString ParaDialog::getDirection()
 {
-    return m_choice->GetStringSelection();
+    return choice_->GetStringSelection();
 }

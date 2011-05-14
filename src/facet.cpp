@@ -52,20 +52,20 @@ Point Facet::calcIntersect(const Point& p1, const Point& p2, double z)
     return p;
 }
 
-Facet::Facet(const Point& normal, const std::vector<Point>& pts):normal(normal), points(pts)
+Facet::Facet(const Point& normal, const std::vector<Point>& pts):normal_(normal), points_(pts)
 {
 
 }
 
 Facet::Facet(const Facet& rhs)
 {
-    normal = rhs.normal;
-    points = rhs.points;
+    normal_ = rhs.normal_;
+    points_ = rhs.points_;
 }
 
 void Facet::scale(double factor)
 {
-    for(vector<Point>::iterator it = points.begin(); it != points.end(); it++) {
+    for(vector<Point>::iterator it = points_.begin(); it != points_.end(); it++) {
         it->x *= factor;
         it->y *= factor;
         it->z *= factor;
@@ -75,23 +75,23 @@ void Facet::scale(double factor)
 void Facet::changeDirection(const wxString& direction)
 {
     if(direction == wxT("+X")) {
-        for(vector<Point>::iterator it = points.begin(); it != points.end(); it++) {
+        for(vector<Point>::iterator it = points_.begin(); it != points_.end(); it++) {
             Point& point = *it;    
             swap(point.x, point.z);
         }
     } else if(direction == wxT("-X")) {
-        for(vector<Point>::iterator it = points.begin(); it != points.end(); it++) {
+        for(vector<Point>::iterator it = points_.begin(); it != points_.end(); it++) {
             Point& point = *it;    
             swap(point.x, point.z);
             point.z = -point.z;
         }
     } else if(direction == wxT("+Y")) {
-        for(vector<Point>::iterator it = points.begin(); it != points.end(); it++) {
+        for(vector<Point>::iterator it = points_.begin(); it != points_.end(); it++) {
             Point& point = *it;    
             swap(point.y, point.z);
         }
     } else if(direction == wxT("-Y")) {
-        for(vector<Point>::iterator it = points.begin(); it != points.end(); it++) {
+        for(vector<Point>::iterator it = points_.begin(); it != points_.end(); it++) {
             Point& point = *it;    
             swap(point.y, point.z);
             point.z = -point.z;
@@ -100,7 +100,7 @@ void Facet::changeDirection(const wxString& direction)
     
     } else if(direction == wxT("-Z")) {
         
-        for(vector<Point>::iterator it = points.begin(); it != points.end(); it++) {
+        for(vector<Point>::iterator it = points_.begin(); it != points_.end(); it++) {
             Point& point = *it;    
             point.z = -point.z;
         }
@@ -113,7 +113,7 @@ pair<int, Line> Facet::intersect(double z)
 
     int c1 = 0;
     int c2 = 0;
-    for(vector<Point>::iterator it = points.begin(); it != points.end(); it++) {
+    for(vector<Point>::iterator it = points_.begin(); it != points_.end(); it++) {
         if(it->z > z) {
             c1++;
         }
@@ -131,7 +131,7 @@ pair<int, Line> Facet::intersect(double z)
     vector<Point> pv;
     Point pe;
     int n = 0;
-    for(vector<Point>::iterator it = points.begin(); it != points.end(); it++) {
+    for(vector<Point>::iterator it = points_.begin(); it != points_.end(); it++) {
         if(equal(it->z, z)) {
             n++;
             pe = *it;
@@ -165,12 +165,12 @@ pair<int, Line> Facet::intersect(double z)
 Line Facet::intersect_0(double z)
 {
     vector<Point> pv;
-    int n = points.size();
+    int n = points_.size();
     wxASSERT(n == 3);
     for(int i = 0; i < n; i++) {
         int next = (i + 1) % n;    
-        Point p1 = points[i];
-        Point p2 = points[next];
+        Point p1 = points_[i];
+        Point p2 = points_[next];
         if(isIntersect(p1, p2, z)) {
             Point p = calcIntersect(p1, p2, z); 
             pv.push_back(p);

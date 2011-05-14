@@ -31,13 +31,13 @@ private:
     void createToolbar();
     
     // data
-    ControlPanel *m_controlPanel;
-    Cadmodel m_cadmodel;
-    Modelcanvas* m_modelCanvas;
-    Pathcanvas* m_pathCanvas;
-    std::map<wxString, wxString> m_paraMap;
-    wxString m_filename;
-    wxStatusBar *m_statusbar;
+    ControlPanel *control_panel_;
+    Cadmodel cadmodel_;
+    Modelcanvas* model_canvas_;
+    Pathcanvas* path_canvas_;
+    std::map<wxString, wxString> param_map_;
+    wxString filename_;
+    wxStatusBar* statusbar_;
     
     DECLARE_EVENT_TABLE()
 };

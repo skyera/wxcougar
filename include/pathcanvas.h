@@ -18,7 +18,7 @@ private:
     void showPath();
     void setupProjection();
 
-    Cadmodel *m_cadmodel;
+    Cadmodel *cadmodel_;
     DECLARE_EVENT_TABLE()
 };
 

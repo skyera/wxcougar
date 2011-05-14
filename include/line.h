@@ -9,8 +9,8 @@ public:
     Line(const Point& p1=Point(), const Point& p2=Point());
     
     double slope();
-    Point m_p1;
-    Point m_p2;
+    Point point1_;
+    Point point2_;
 };
 
 #endif

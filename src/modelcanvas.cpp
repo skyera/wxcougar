@@ -28,9 +28,9 @@ END_EVENT_TABLE()
 
 Modelcanvas::Modelcanvas(wxWindow* parent, Cadmodel *cadmodel):wxGLCanvas(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE)
 {
-    m_cadmodel = cadmodel;
-    m_xangle = 0;
-    m_yangle = 0;
+    cadmodel_ = cadmodel;
+    xangle_ = 0;
+    yangle_ = 0;
 }
 
 void Modelcanvas::OnPaint(wxPaintEvent& event)
@@ -67,7 +67,7 @@ void Modelcanvas::OnSize(wxSizeEvent& event)
 
 void Modelcanvas::setupProjection()
 {
-    double diameter = m_cadmodel->getDiameter();
+    double diameter = cadmodel_->getDiameter();
     int w, h;
     GetClientSize(&w, &h);
     double half = diameter / 2;
@@ -98,7 +98,7 @@ void Modelcanvas::setupProjection()
 
 void Modelcanvas::showModel()
 {
-    if(!m_cadmodel->isLoaded()) {
+    if(!cadmodel_->isLoaded()) {
         return;
     }     
     
@@ -106,12 +106,12 @@ void Modelcanvas::showModel()
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    glTranslatef(0.0, 0.0, -m_cadmodel->getDiameter());
-    glRotatef(m_xangle, 1, 0, 0);
-    glRotatef(m_yangle, 0, 1, 1);
+    glTranslatef(0.0, 0.0, -cadmodel_->getDiameter());
+    glRotatef(xangle_, 1, 0, 0);
+    glRotatef(yangle_, 0, 1, 1);
 
-    glTranslatef(-m_cadmodel->getXcenter(), -m_cadmodel->getYcenter(), -m_cadmodel->getZcenter());
-    int gid = m_cadmodel->createGLModellist();
+    glTranslatef(-cadmodel_->getXcenter(), -cadmodel_->getYcenter(), -cadmodel_->getZcenter());
+    int gid = cadmodel_->createGLModellist();
     glCallList(gid);
 }
 
@@ -128,8 +128,8 @@ void Modelcanvas::OnMouseEvent(wxMouseEvent& event)
         if(!dragging) {
             dragging = 1;
         } else {
-            m_yangle += (event.GetX() - last_x) * 1.0;
-            m_xangle += (event.GetY() - last_y) * 1.0;
+            yangle_ += (event.GetX() - last_x) * 1.0;
+            xangle_ += (event.GetY() - last_y) * 1.0;
             Refresh(false);
         }
 
@@ -172,11 +172,11 @@ void Modelcanvas::setupGLContext()
 
 void Modelcanvas::showPath()
 {
-    if(!m_cadmodel->isSliced()) {
+    if(!cadmodel_->isSliced()) {
         return;
     }
 
-    int id = m_cadmodel->getCurrLayerGLList();
+    int id = cadmodel_->getCurrLayerGLList();
     glCallList(id);
 }
 

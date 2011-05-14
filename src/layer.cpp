@@ -28,13 +28,13 @@ using namespace cougar;
 
 Layer::Layer(double z, double pitch)
 {
-    m_z = z;
-    m_pitch = pitch;
+    z_ = z;
+    pitch_ = pitch;
 }
 
 bool Layer::setLines(const vector<Line>& lines)
 {
-    m_lines = lines;
+    lines_ = lines;
     bool ok = createLoops();
     if(!ok) {
         return false;
@@ -48,37 +48,37 @@ bool Layer::setLines(const vector<Line>& lines)
 
 bool Layer::createLoops()
 {
-    m_loops.clear();
-    while(!m_lines.empty()) {
-        Line line = m_lines.back();
-        m_lines.pop_back();
+    loops_.clear();
+    while(!lines_.empty()) {
+        Line line = lines_.back();
+        lines_.pop_back();
 
         vector<Line> loop;
         loop.push_back(line);
 
-        Point start = line.m_p1;
-        Point p2 = line.m_p2;
+        Point start = line.point1_;
+        Point p2 = line.point2_;
         Point p1;
 
         while(true) {
             bool found = false;
             vector<Line>::iterator it;
-            for(it = m_lines.begin(); it != m_lines.end(); it++) {
-                if(p2 == it->m_p1) {
-                    p1 = it->m_p1;
-                    p2 = it->m_p2;
+            for(it = lines_.begin(); it != lines_.end(); it++) {
+                if(p2 == it->point1_) {
+                    p1 = it->point1_;
+                    p2 = it->point2_;
                     found = true;
                     break;
-                } else if(p2 == it->m_p2) {
-                    p1 = it->m_p2;
-                    p2 = it->m_p1;
+                } else if(p2 == it->point2_) {
+                    p1 = it->point2_;
+                    p2 = it->point1_;
                     found = true;
                     break;
                 }
             }
 
             if(found) {
-                m_lines.erase(it); 
+                lines_.erase(it); 
                 loop.push_back(Line(p1, p2));
                 if(p2 == start) {
                     break;
@@ -90,7 +90,7 @@ bool Layer::createLoops()
 
         moveLines(loop);
         mergeLines(loop);
-        m_loops.push_back(loop);
+        loops_.push_back(loop);
     }
     return true;
 }
@@ -132,18 +132,18 @@ void Layer::mergeLines(vector<Line>& loop)
     while(!loop.empty()) {
         Line line = loop.front(); 
         double k1 = line.slope();
-        Point p1 = line.m_p1;
-        Point p2 = line.m_p2;
+        Point p1 = line.point1_;
+        Point p2 = line.point2_;
 
         loop.erase(loop.begin());
         int n = 0;
         for(vector<Line>::iterator it = loop.begin(); it != loop.end(); it++) {
             double k2 = it->slope(); 
             if(equal(k1, k2)) {
-                p2 = it->m_p2;
+                p2 = it->point2_;
                 n++;
             } else {
-                p2 = it->m_p1;
+                p2 = it->point1_;
                 break;
             }
         }
@@ -164,7 +164,7 @@ int Layer::createGLList()
     glBegin(GL_LINES);
     
     // chunks
-    for(vector<vector<Line> > ::iterator it = m_chunks.begin(); it != m_chunks.end(); it++) {
+    for(vector<vector<Line> > ::iterator it = chunks_.begin(); it != chunks_.end(); it++) {
         vector<Line>& chunk = *it;
         int r = rand() % 256;
         int g = rand() % 256;
@@ -172,22 +172,22 @@ int Layer::createGLList()
         glColor3ub(r, g, b);
         for(vector<Line>::iterator lit = chunk.begin(); lit != chunk.end(); lit++) {
             Line& line = *lit;      
-            Point& p1 = line.m_p1;
+            Point& p1 = line.point1_;
             glVertex3f(p1.x, p1.y, p1.z);
-            Point& p2 = line.m_p2;
+            Point& p2 = line.point2_;
             glVertex3f(p2.x, p2.y, p2.z);
         }
     }    
     
     glColor3f(1, 1, 1);
     // loops
-    for(vector<vector<Line> >::iterator it = m_loops.begin(); it != m_loops.end(); it++) {
+    for(vector<vector<Line> >::iterator it = loops_.begin(); it != loops_.end(); it++) {
         vector<Line>& loop = *it;
         for(vector<Line>::iterator lit = loop.begin(); lit != loop.end(); lit++) {
             Line& line = *lit;
-            Point& p1 = line.m_p1;
+            Point& p1 = line.point1_;
             glVertex3f(p1.x, p1.y, p1.z);
-            Point& p2 = line.m_p2;
+            Point& p2 = line.point2_;
             glVertex3f(p2.x, p2.y, p2.z);
         }
     }
@@ -199,21 +199,21 @@ int Layer::createGLList()
 
 void Layer::createScanlines()
 {
-    m_scanlines.clear();
-    double y = m_miny + m_pitch;    
-    double lasty = m_miny;
-    while(y < m_maxy) {
+    scanlines_.clear();
+    double y = miny_ + pitch_;    
+    double lasty = miny_;
+    while(y < maxy_) {
         pair<int, vector<Line> > pair = createOneScanline(y); 
         int code = pair.first;
         if(code == NOT_SCANLINE) {
             lasty = y;
-            y += m_pitch;
+            y += pitch_;
         } else if(code == SCANLINE) {
-            m_scanlines.push_back(pair.second); 
+            scanlines_.push_back(pair.second); 
             lasty = y;
-            y += m_pitch;
+            y += pitch_;
         } else {
-            y = y - m_pitch * 0.01;
+            y = y - pitch_ * 0.01;
             if(y < lasty) {
                 break;
             }
@@ -226,7 +226,7 @@ pair<int, vector<Line> > Layer::createOneScanline(double y)
 {
     set<wxString> xset;
     pair<int, vector<Line> > ret;
-    for(vector<vector<Line> >::iterator it = m_loops.begin(); it != m_loops.end(); it++) {
+    for(vector<vector<Line> >::iterator it = loops_.begin(); it != loops_.end(); it++) {
         vector<Line>& loop = *it;
         for(vector<Line>::iterator lit = loop.begin(); lit != loop.end(); lit++) {
             pair<int, double> pair = intersect(y, *lit, loop);
@@ -258,8 +258,8 @@ pair<int, vector<Line> > Layer::createOneScanline(double y)
         for(int i = 0; i <= n - 2; i += 2) {
             double x1 = V[i];
             double x2 = V[i + 1];
-            Point p1(x1, y, m_z);
-            Point p2(x2, y, m_z);
+            Point p1(x1, y, z_);
+            Point p2(x2, y, z_);
             Line line(p1, p2);
             lines.push_back(line);
         }
@@ -278,19 +278,19 @@ pair<int, double> Layer::intersect(double y, const Line& line, const vector<Line
 {
     pair<int, double> ret;
 
-    double y1 = line.m_p1.y;
-    double y2 = line.m_p2.y;
+    double y1 = line.point1_.y;
+    double y2 = line.point2_.y;
     Point p;
     if(isIntersect(y1, y2, y)) {
         int count = 0;
         if(equal(y, y1)) {
             count++;
-            p = line.m_p1;
+            p = line.point1_;
         }
 
         if(equal(y, y2)) {
             count++;
-            p = line.m_p2;
+            p = line.point2_;
         }
 
         if(count == 0) {
@@ -316,10 +316,10 @@ pair<int, double> Layer::intersect(double y, const Line& line, const vector<Line
 
 double Layer::intersect_0(double y, const Line& line)
 {
-    double x1 = line.m_p1.x;
-    double y1 = line.m_p1.y;
-    double x2 = line.m_p2.x;
-    double y2 = line.m_p2.y;
+    double x1 = line.point1_.x;
+    double y1 = line.point1_.y;
+    double x2 = line.point2_.x;
+    double y2 = line.point2_.y;
 
     if(equal(x1, x2)) {
         return x1;
@@ -333,10 +333,10 @@ bool Layer::isPeak(double y, const Point& point, const vector<Line>& loop)
 {
     vector<Point> pts;
     for(vector<Line>::const_iterator it = loop.begin(); it != loop.end(); it++) {
-        if(point == it->m_p1) {
-             pts.push_back(it->m_p2);       
-        } else if(point == it->m_p2) {
-            pts.push_back(it->m_p1);
+        if(point == it->point1_) {
+             pts.push_back(it->point2_);       
+        } else if(point == it->point2_) {
+            pts.push_back(it->point1_);
         }
     }
 
@@ -363,28 +363,28 @@ bool Layer::isIntersect(double y1, double y2, double y)
 void Layer::calcDimension()
 {
     vector<double> ylist;
-    for(vector<vector<Line> >::iterator it = m_loops.begin(); it != m_loops.end(); it++) {
+    for(vector<vector<Line> >::iterator it = loops_.begin(); it != loops_.end(); it++) {
         vector<Line>& loop = *it;
         for(vector<Line>::iterator lit = loop.begin(); lit != loop.end(); lit++) {
-            ylist.push_back(lit->m_p1.y);
-            ylist.push_back(lit->m_p2.y);
+            ylist.push_back(lit->point1_.y);
+            ylist.push_back(lit->point2_.y);
         }
     } 
 
-    m_miny = *min_element(ylist.begin(), ylist.end());
-    m_maxy = *max_element(ylist.begin(), ylist.end());
+    miny_ = *min_element(ylist.begin(), ylist.end());
+    maxy_ = *max_element(ylist.begin(), ylist.end());
 }
 
 pair<bool, Line> Layer::getOverlapLine(const Line& line, std::vector<Line>& scanline)
 {
     pair<bool, Line> ret;
-    double y2 = scanline[0].m_p1.y;
-    double y1 = line.m_p1.y;
+    double y2 = scanline[0].point1_.y;
+    double y1 = line.point1_.y;
 
     double distance = fabs(y2 - y1);
-    if(equal(distance, m_pitch) || distance < m_pitch) {
+    if(equal(distance, pitch_) || distance < pitch_) {
         for(vector<Line>::iterator it = scanline.begin(); it != scanline.end(); it++) {
-            if((it->m_p1.x >= line.m_p2.x) || (it->m_p2.x <= line.m_p1.x)) {
+            if((it->point1_.x >= line.point2_.x) || (it->point2_.x <= line.point1_.x)) {
             
             } else {
                 ret.first = true;
@@ -401,16 +401,16 @@ pair<bool, Line> Layer::getOverlapLine(const Line& line, std::vector<Line>& scan
 
 void Layer::createChunks()
 {
-    m_chunks.clear();    
-    while(!m_scanlines.empty()) {
+    chunks_.clear();    
+    while(!scanlines_.empty()) {
         vector<Line> chunk;
-        vector<Line>& scanline = m_scanlines[0];
+        vector<Line>& scanline = scanlines_[0];
         Line line = scanline.front();
         scanline.erase(scanline.begin());
         chunk.push_back(line);
 
-        for(int i = 1; i < m_scanlines.size(); i++) {
-            vector<Line>& scanline = m_scanlines[i];
+        for(int i = 1; i < scanlines_.size(); i++) {
+            vector<Line>& scanline = scanlines_[i];
             pair<bool, Line> pair = getOverlapLine(line, scanline); 
             if(pair.first) {
                 chunk.push_back(pair.second);
@@ -420,21 +420,21 @@ void Layer::createChunks()
             }
         }
         
-        m_chunks.push_back(chunk);
+        chunks_.push_back(chunk);
         
         vector<vector<Line> > scanlines;
-        for(vector<vector<Line> >::iterator it = m_scanlines.begin(); it != m_scanlines.end(); it++) {
+        for(vector<vector<Line> >::iterator it = scanlines_.begin(); it != scanlines_.end(); it++) {
             if(!it->empty()) {
                 scanlines.push_back(*it);
             }
         }
-        m_scanlines = scanlines;
+        scanlines_ = scanlines;
     }
 }
 
 void writeline(const Line& line, ofstream& f)
 {
-    Point pts[] = {line.m_p1, line.m_p2};
+    Point pts[] = {line.point1_, line.point2_};
     f << "<line>";
     for(int i = 0; i < 2; i++) {
         Point& p = pts[i];
@@ -449,10 +449,10 @@ void writeline(const Line& line, ofstream& f)
 
 void Layer::save(ofstream& f)
 {
-    f << "<layer id=\"" << m_id << "\" height=\"" << m_z << "\">\n";
-    f << "<loops num=\"" << m_loops.size() << "\">\n";
+    f << "<layer id=\"" << id_ << "\" height=\"" << z_ << "\">\n";
+    f << "<loops num=\"" << loops_.size() << "\">\n";
     int count = 0;
-    for(vector<vector<Line> >::iterator it = m_loops.begin(); it != m_loops.end(); it++) {
+    for(vector<vector<Line> >::iterator it = loops_.begin(); it != loops_.end(); it++) {
         vector<Line>& loop = *it;
         count++;
         f << "<loop id=\"" << count << "\">\n";
@@ -463,9 +463,9 @@ void Layer::save(ofstream& f)
     }
     f << "</loops>\n";
     
-    f << "<chunks num=\"" << m_chunks.size() << "\">\n";
+    f << "<chunks num=\"" << chunks_.size() << "\">\n";
     count = 0;
-    for(vector<vector<Line> >::iterator it = m_chunks.begin(); it != m_chunks.end(); it++) {
+    for(vector<vector<Line> >::iterator it = chunks_.begin(); it != chunks_.end(); it++) {
         vector<Line>& chunk = *it;
         count++;
         f << "<chunk id=\"" << count << "\">\n";
