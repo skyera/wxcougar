@@ -22,9 +22,9 @@ private:
     void showPath();
     void setupGLContext();
 
-    Cadmodel *m_cadmodel;
-    int m_xangle;
-    int m_yangle;
+    Cadmodel* cadmodel_;
+    int xangle_;
+    int yangle_;
     
     DECLARE_EVENT_TABLE()
 };

@@ -12,8 +12,8 @@ public:
     wxString getDirection();
 private:
     void createControls();
-    std::map<wxString, wxString> &m_paraMap;
-    wxChoice *m_choice;
+    std::map<wxString, wxString> &param_map_;
+    wxChoice *choice_;
 };
 
 #endif

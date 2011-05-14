@@ -48,16 +48,16 @@ CougarFrame::CougarFrame(const wxString& title):
     createMenu();
     createToolbar();
     createControls();
-    m_statusbar = CreateStatusBar();
-    m_statusbar->SetStatusText(wxT("Welcome"), 0);
+    statusbar_ = CreateStatusBar();
+    statusbar_->SetStatusText(wxT("Welcome"), 0);
     Centre();
 
     //
-    m_paraMap.insert(make_pair(wxT("height"), wxT("1.0")));
-    m_paraMap.insert(make_pair(wxT("pitch"), wxT("1.0")));
-    m_paraMap.insert(make_pair(wxT("speed"), wxT("10.0")));
-    m_paraMap.insert(make_pair(wxT("direction"), wxT("+Z")));
-    m_paraMap.insert(make_pair(wxT("scale"), wxT("1.0")));
+    param_map_.insert(make_pair(wxT("height"), wxT("1.0")));
+    param_map_.insert(make_pair(wxT("pitch"), wxT("1.0")));
+    param_map_.insert(make_pair(wxT("speed"), wxT("10.0")));
+    param_map_.insert(make_pair(wxT("direction"), wxT("+Z")));
+    param_map_.insert(make_pair(wxT("scale"), wxT("1.0")));
 
 }
 
@@ -94,25 +94,25 @@ void CougarFrame::OnOpen(wxCommandEvent& event)
     wxFileDialog dlg(this, caption, wxGetCwd(), wxEmptyString, wildcard, wxOPEN); 
     if(dlg.ShowModal() == wxID_OK) {
         wxString filename = dlg.GetPath();    
-        bool ok = m_cadmodel.open(filename);
+        bool ok = cadmodel_.open(filename);
         if(!ok) {
             wxMessageBox(wxT("cannot open ") + filename, wxT("Error"), wxOK|wxICON_ERROR);
             return;
         }
         
-        m_filename = wxFileName(filename).GetName();
+        filename_ = wxFileName(filename).GetName();
         map<wxString, wxString> dmap;
         
-        dmap[wxT("oldx")] = wxString::Format(wxT("%f"), m_cadmodel.getXsize());
-        dmap[wxT("oldy")] = wxString::Format(wxT("%f"), m_cadmodel.getYsize());;
-        dmap[wxT("oldz")] = wxString::Format(wxT("%f"), m_cadmodel.getZsize());
+        dmap[wxT("oldx")] = wxString::Format(wxT("%f"), cadmodel_.getXsize());
+        dmap[wxT("oldy")] = wxString::Format(wxT("%f"), cadmodel_.getYsize());;
+        dmap[wxT("oldz")] = wxString::Format(wxT("%f"), cadmodel_.getZsize());
         dmap[wxT("newx")] = wxT("");
         dmap[wxT("newy")] = wxT("");
         dmap[wxT("newz")] = wxT("");
-        m_controlPanel->setDimension(dmap);
-        m_modelCanvas->Refresh();
-        m_pathCanvas->Refresh();
-        m_statusbar->SetStatusText(wxT("open ") + filename, 0);
+        control_panel_->setDimension(dmap);
+        model_canvas_->Refresh();
+        path_canvas_->Refresh();
+        statusbar_->SetStatusText(wxT("open ") + filename, 0);
     }
 }
 
@@ -121,8 +121,8 @@ void CougarFrame::createControls()
     wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
     
     // control panel
-    m_controlPanel = new ControlPanel(this);
-    sizer->Add(m_controlPanel, 0, wxEXPAND);
+    control_panel_ = new ControlPanel(this);
+    sizer->Add(control_panel_, 0, wxEXPAND);
     
     // splitter
     wxSplitterWindow *splitter = createSplitter();
@@ -136,15 +136,15 @@ wxSplitterWindow* CougarFrame::createSplitter()
     
     // model canvas
     wxPanel *panel1 = new wxPanel(splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER);
-    m_modelCanvas = new Modelcanvas(panel1, &m_cadmodel);
+    model_canvas_ = new Modelcanvas(panel1, &cadmodel_);
     wxBoxSizer *box = new wxBoxSizer(wxVERTICAL);
-    box->Add(m_modelCanvas, 1, wxEXPAND);
+    box->Add(model_canvas_, 1, wxEXPAND);
     panel1->SetSizer(box);
 
     wxPanel *panel2 = new wxPanel(splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER);
-    m_pathCanvas = new Pathcanvas(panel2, &m_cadmodel);
+    path_canvas_ = new Pathcanvas(panel2, &cadmodel_);
     wxBoxSizer *box2 = new wxBoxSizer(wxVERTICAL);
-    box2->Add(m_pathCanvas, 1, wxEXPAND);
+    box2->Add(path_canvas_, 1, wxEXPAND);
     panel2->SetSizer(box2);
 
     splitter->Initialize(panel1);
@@ -177,20 +177,20 @@ void CougarFrame::createToolbar()
 
 void CougarFrame::OnSlice(wxCommandEvent& event)
 {
-    if(!m_cadmodel.isLoaded()) {
+    if(!cadmodel_.isLoaded()) {
         return;
     }
 
-    ParaDialog dlg(this, -1, wxT("slice parameters"), m_paraMap);
+    ParaDialog dlg(this, -1, wxT("slice parameters"), param_map_);
     if(dlg.ShowModal() == wxID_OK) {
         wxString dir = dlg.getDirection();
-        m_paraMap[wxT("direction")] = dir;
+        param_map_[wxT("direction")] = dir;
         
-        wxString s_height = m_paraMap[wxT("height")];
-        wxString s_pitch = m_paraMap[wxT("pitch")];
-        wxString s_speed = m_paraMap[wxT("speed")];
-        wxString s_direction = m_paraMap[wxT("direction")];
-        wxString s_scale = m_paraMap[wxT("scale")];
+        wxString s_height = param_map_[wxT("height")];
+        wxString s_pitch = param_map_[wxT("pitch")];
+        wxString s_speed = param_map_[wxT("speed")];
+        wxString s_direction = param_map_[wxT("direction")];
+        wxString s_scale = param_map_[wxT("scale")];
 
         double height, pitch, speed, scale;
         s_height.ToDouble(&height);
@@ -200,38 +200,38 @@ void CougarFrame::OnSlice(wxCommandEvent& event)
         
         wxWindowDisabler disableAll;
         wxBusyInfo info(wxT("Slicing, please wait..."), this);
-        m_cadmodel.slice(height, pitch, speed, s_direction, scale);
+        cadmodel_.slice(height, pitch, speed, s_direction, scale);
         
         map<wxString, wxString> dmap;
-        dmap[wxT("newx")] = wxString::Format(wxT("%f"), m_cadmodel.getXsize());
-        dmap[wxT("newy")] = wxString::Format(wxT("%f"), m_cadmodel.getYsize());
-        dmap[wxT("newz")] = wxString::Format(wxT("%f"), m_cadmodel.getZsize());
-        m_controlPanel->setDimension(dmap);
-        m_modelCanvas->Refresh();
-        m_pathCanvas->Refresh();
-        m_controlPanel->setSliceInfo(m_paraMap);
-        if(m_cadmodel.isSliced()) {
-            m_controlPanel->setNoLayer(m_cadmodel.getNoLayers());
-            m_controlPanel->setCurrLayer(m_cadmodel.getCurrLayerIndex());
-            m_statusbar->SetStatusText(wxT("sliced"), 0);
+        dmap[wxT("newx")] = wxString::Format(wxT("%f"), cadmodel_.getXsize());
+        dmap[wxT("newy")] = wxString::Format(wxT("%f"), cadmodel_.getYsize());
+        dmap[wxT("newz")] = wxString::Format(wxT("%f"), cadmodel_.getZsize());
+        control_panel_->setDimension(dmap);
+        model_canvas_->Refresh();
+        path_canvas_->Refresh();
+        control_panel_->setSliceInfo(param_map_);
+        if(cadmodel_.isSliced()) {
+            control_panel_->setNoLayer(cadmodel_.getNoLayers());
+            control_panel_->setCurrLayer(cadmodel_.getCurrLayerIndex());
+            statusbar_->SetStatusText(wxT("sliced"), 0);
         }
     }
 }
 
 void CougarFrame::OnNextLayer(wxCommandEvent& event)
 {
-    m_cadmodel.nextLayer();
-    m_controlPanel->setCurrLayer(m_cadmodel.getCurrLayerIndex());
-    m_modelCanvas->Refresh(false);
-    m_pathCanvas->Refresh(false);
+    cadmodel_.nextLayer();
+    control_panel_->setCurrLayer(cadmodel_.getCurrLayerIndex());
+    model_canvas_->Refresh(false);
+    path_canvas_->Refresh(false);
 }
 
 void CougarFrame::OnPrevLayer(wxCommandEvent& event)
 {
-    m_cadmodel.prevLayer();
-    m_controlPanel->setCurrLayer(m_cadmodel.getCurrLayerIndex());
-    m_modelCanvas->Refresh(false);
-    m_pathCanvas->Refresh(false);
+    cadmodel_.prevLayer();
+    control_panel_->setCurrLayer(cadmodel_.getCurrLayerIndex());
+    model_canvas_->Refresh(false);
+    path_canvas_->Refresh(false);
 }
 
 void CougarFrame::OnExit(wxCommandEvent& event)
@@ -254,13 +254,13 @@ void CougarFrame::OnAbout(wxCommandEvent& event)
 
 void CougarFrame::OnSave(wxCommandEvent& event)
 {
-    if(!m_cadmodel.isSliced()) {
+    if(!cadmodel_.isSliced()) {
         return;
     }
     
     wxString caption = wxT("Save slice info");
     wxString wildcard = wxT("xml files (*.xml)|*.xml|All files(*.*)|*.*");
-    wxFileDialog dlg(this, caption, wxT("."), m_filename, wildcard, wxSAVE);
+    wxFileDialog dlg(this, caption, wxT("."), filename_, wildcard, wxSAVE);
     if(dlg.ShowModal() == wxID_OK) {
         wxString filename = dlg.GetPath();    
         bool ext = wxFileName(filename).HasExt();
@@ -268,7 +268,7 @@ void CougarFrame::OnSave(wxCommandEvent& event)
             filename += wxT(".xml");
         } 
 
-        m_cadmodel.save(filename);
-        m_statusbar->SetStatusText(wxT("slice info is saved in ") + filename, 0);
+        cadmodel_.save(filename);
+        statusbar_->SetStatusText(wxT("slice info is saved in ") + filename, 0);
     }
 }

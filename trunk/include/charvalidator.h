@@ -16,8 +16,8 @@ public:
 
     DECLARE_EVENT_TABLE()
 private:
-    wxString m_key;
-    std::map<wxString, wxString>& m_paraMap;
+    wxString key_;
+    std::map<wxString, wxString>& param_map_;
 };
 
 #endif

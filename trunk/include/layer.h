@@ -32,15 +32,15 @@ private:
     std::pair<bool, Line> getOverlapLine(const Line& line, std::vector<Line>& scanline);
     
     // data
-    double m_z;
-    double m_pitch;
-    std::vector<Line> m_lines;
-    std::vector<std::vector<Line> > m_loops;
-    std::vector<std::vector<Line> > m_scanlines;
-    std::vector<std::vector<Line> > m_chunks;
-    double m_miny;
-    double m_maxy;
-    int m_id;
+    double z_;
+    double pitch_;
+    std::vector<Line> lines_;
+    std::vector<std::vector<Line> > loops_;
+    std::vector<std::vector<Line> > scanlines_;
+    std::vector<std::vector<Line> > chunks_;
+    double miny_;
+    double maxy_;
+    int id_;
 };
 
 #endif

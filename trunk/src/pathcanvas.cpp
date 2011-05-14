@@ -24,7 +24,7 @@ END_EVENT_TABLE()
 Pathcanvas::Pathcanvas(wxWindow* parent, Cadmodel *cadmodel):
     wxGLCanvas(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxFULL_REPAINT_ON_RESIZE)
 {
-    m_cadmodel = cadmodel;
+    cadmodel_ = cadmodel;
 }
 
 void Pathcanvas::OnPaint(wxPaintEvent& event)
@@ -54,7 +54,7 @@ void Pathcanvas::OnSize(wxSizeEvent& event)
 
 void Pathcanvas::showPath()
 {
-    if(!m_cadmodel->isSliced()) {
+    if(!cadmodel_->isSliced()) {
         return;
     }
 
@@ -62,16 +62,16 @@ void Pathcanvas::showPath()
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     
-    double z = m_cadmodel->getCurrLayerHeight();
-    glTranslatef(-m_cadmodel->getXcenter(), -m_cadmodel->getYcenter(), -z);
-    int id = m_cadmodel->getCurrLayerGLList();
+    double z = cadmodel_->getCurrLayerHeight();
+    glTranslatef(-cadmodel_->getXcenter(), -cadmodel_->getYcenter(), -z);
+    int id = cadmodel_->getCurrLayerGLList();
     glCallList(id);
 
 }
 
 void Pathcanvas::setupProjection()
 {
-    double diameter = m_cadmodel->getDiameter();
+    double diameter = cadmodel_->getDiameter();
     int w, h;
     GetClientSize(&w, &h);
     double half = diameter / 2;

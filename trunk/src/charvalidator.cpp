@@ -6,14 +6,15 @@ BEGIN_EVENT_TABLE(CharValidator, wxValidator)
     EVT_CHAR(CharValidator::OnChar)
 END_EVENT_TABLE()
 
-CharValidator::CharValidator(const wxString& key, map<wxString, wxString>& paraMap):m_paraMap(paraMap), m_key(key)
+CharValidator::CharValidator(const wxString& key, map<wxString, wxString>& param_map)
+    :param_map_(param_map), key_(key)
 {
     
 }
 
 wxObject* CharValidator::Clone() const
 {
-    return new CharValidator(m_key, m_paraMap);
+    return new CharValidator(key_, param_map_);
 }
 
 bool CharValidator::Validate(wxWindow* parent)
@@ -48,7 +49,7 @@ bool CharValidator::TransferToWindow()
 bool CharValidator::TransferFromWindow()
 {
     wxString value = ((wxTextCtrl*) m_validatorWindow)->GetValue();
-    m_paraMap[m_key] = value;
+    param_map_[key_] = value;
     return true;
 }
 

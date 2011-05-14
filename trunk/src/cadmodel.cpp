@@ -37,14 +37,14 @@ public:
 class FormatError: public exception
 {
 public:
-    FormatError(const string& msg=""):m_msg(msg)
+    FormatError(const string& msg=""):msg_(msg)
     {
          
     }
 
     virtual const char* what() const throw()
     {
-        string s = "FormatError: " + m_msg;
+        string s = "FormatError: " + msg_;
         return s.c_str();
     }
     virtual ~FormatError() throw()
@@ -53,7 +53,7 @@ public:
     }
 
 private:
-    string m_msg;
+    string msg_;
 };
 
 wxArrayString tokenize(const wxString& string)
@@ -72,23 +72,23 @@ string genMsg(const string& info, const wxString& line)
     return info + string(line.mb_str());
 }
 
-Cadmodel::Cadmodel():m_loaded(false)
+Cadmodel::Cadmodel():loaded_(false)
 {
-    m_sliced = false;    
-    m_scale = 1.0;
+    sliced_ = false;    
+    scale_ = 1.0;
 }
 
 bool Cadmodel::open(const wxString& filename)
 {
     wxTextFile file;
     if(file.Open(filename)) {
-        clearFacets(m_facets);
-        clearFacets(m_oldfacets);
+        clearFacets(facets_);
+        clearFacets(oldfacets_);
         try {
             getSolidline(file);
             while(true) {
                 Facet *facet = getOneFacet(file); 
-                m_facets.push_back(facet);
+                facets_.push_back(facet);
             }
         }
         catch(EofError& err) {
@@ -98,17 +98,17 @@ bool Cadmodel::open(const wxString& filename)
             cerr << err.what() << endl; 
         }
 
-        if(m_loaded) {
-            cout << "no of facets:" << m_facets.size() << endl;
+        if(loaded_) {
+            cout << "no of facets:" << facets_.size() << endl;
             calcDimension();
             
-            clearFacets(m_oldfacets);
-            for(vector<Facet*>::iterator it = m_facets.begin(); it != m_facets.end(); it++) {
+            clearFacets(oldfacets_);
+            for(vector<Facet*>::iterator it = facets_.begin(); it != facets_.end(); it++) {
                 Facet *facet = *it; 
                 Facet *nfacet = new Facet(*facet);
-                m_oldfacets.push_back(nfacet);
+                oldfacets_.push_back(nfacet);
             }
-            m_sliced = false;
+            sliced_ = false;
             return true;
         }
     } 
@@ -136,7 +136,7 @@ wxArrayString Cadmodel::getLine(wxTextFile& file)
     wxArrayString tokens;
     if(!file.Eof()) {
         wxString line = file.GetNextLine();
-        m_line = line;
+        line_ = line;
         wxStringTokenizer tokenizer(line); 
         
         while(tokenizer.HasMoreTokens()) {
@@ -173,7 +173,7 @@ Point Cadmodel::getNormal(wxTextFile& file)
     if(n >= 1 && n <= 2) {
         wxString t1 = tokens[0];        
         if(t1 == wxT("endsolid")) {
-            m_loaded = true;
+            loaded_ = true;
             throw EofError();
         }
     } else if(n == 5) {
@@ -190,7 +190,7 @@ Point Cadmodel::getNormal(wxTextFile& file)
 
         return Point(x, y, z);
     } else {
-        string msg = genMsg("normal", m_line);
+        string msg = genMsg("normal", line_);
         throw FormatError(msg);
     }
 }
@@ -198,11 +198,11 @@ Point Cadmodel::getNormal(wxTextFile& file)
 void Cadmodel::getOuterloop(wxTextFile& file)
 {
     wxArrayString tokens = getLine(file); 
-    int n = tokens.Count();
-    if(n == 2) {
+    int num_tokens = tokens.Count();
+    if(num_tokens == 2) {
         
     } else {
-        string msg = genMsg("outerloop", m_line);
+        string msg = genMsg("outerloop", line_);
         throw FormatError(msg);
     }
 }
@@ -210,8 +210,8 @@ void Cadmodel::getOuterloop(wxTextFile& file)
 Point Cadmodel::getVertex(wxTextFile& file)
 {
     wxArrayString tokens = getLine(file);
-    int n = tokens.Count();
-    if(n == 4) {
+    int num_tokens = tokens.Count();
+    if(num_tokens == 4) {
         wxString sx = tokens[1];
         wxString sy = tokens[2];
         wxString sz = tokens[3];
@@ -222,7 +222,7 @@ Point Cadmodel::getVertex(wxTextFile& file)
         sz.ToDouble(&z);
         return Point(x, y, z);
     } else {
-        string msg = genMsg("vertex", m_line);
+        string msg = genMsg("vertex", line_);
         throw FormatError(msg);
     }
 }
@@ -230,11 +230,11 @@ Point Cadmodel::getVertex(wxTextFile& file)
 void Cadmodel::getEndloop(wxTextFile& file)
 {
     wxArrayString tokens = getLine(file);
-    int n = tokens.Count();
-    if(n == 1) {
+    int num_tokens = tokens.Count();
+    if(num_tokens == 1) {
     
     } else {
-        string msg = genMsg("endloop", m_line);
+        string msg = genMsg("endloop", line_);
         throw FormatError(msg);
     }
 }
@@ -246,7 +246,7 @@ void Cadmodel::getEndfacet(wxTextFile& file)
 
 void Cadmodel::clearFacets(vector<Facet*> & facets)
 {
-    for(vector<Facet*>::iterator it = facets.begin(); it != facets.end(); it++) {
+    for(vector<Facet*>::iterator it = facets.begin(); it != facets.end(); ++it) {
         delete *it;
     }
     facets.clear();
@@ -254,16 +254,16 @@ void Cadmodel::clearFacets(vector<Facet*> & facets)
 
 Cadmodel::~Cadmodel()
 {
-    clearFacets(m_facets);
-    clearFacets(m_oldfacets);
+    clearFacets(facets_);
+    clearFacets(oldfacets_);
 }
 
 void Cadmodel::calcDimension()
 {
     vector<double> xlist, ylist, zlist;
-    for(vector<Facet*>::iterator it = m_facets.begin(); it != m_facets.end(); it++) {
+    for(vector<Facet*>::iterator it = facets_.begin(); it != facets_.end(); it++) {
         Facet *facet = *it;
-        const vector<Point> &points = facet->points; 
+        const vector<Point> &points = facet->points_; 
         for(vector<Point>::const_iterator pit = points.begin(); pit != points.end(); pit++) {
             const Point &p = *pit;
             xlist.push_back(p.x);
@@ -272,28 +272,28 @@ void Cadmodel::calcDimension()
         }
     }
     double min, max;
-    m_minx = min = *min_element(xlist.begin(), xlist.end());
-    m_maxx = max = *max_element(xlist.begin(), xlist.end());
-    m_xsize = max - min;
-    m_xcenter = (min + max) / 2;
+    minx_ = min = *min_element(xlist.begin(), xlist.end());
+    maxx_ = max = *max_element(xlist.begin(), xlist.end());
+    xsize_ = max - min;
+    xcenter_ = (min + max) / 2;
     
     //
-    m_miny = min = *min_element(ylist.begin(), ylist.end());
-    m_maxy = max = *max_element(ylist.begin(), ylist.end());
-    m_ysize = max - min;
-    m_ycenter = (min + max) / 2;
+    miny_ = min = *min_element(ylist.begin(), ylist.end());
+    maxy_ = max = *max_element(ylist.begin(), ylist.end());
+    ysize_ = max - min;
+    ycenter_ = (min + max) / 2;
     
     //
-    m_minz = min = *min_element(zlist.begin(), zlist.end());
-    m_maxz = max = *max_element(zlist.begin(), zlist.end());
-    m_zsize = max - min;
-    m_zcenter = (min + max) / 2;
+    minz_ = min = *min_element(zlist.begin(), zlist.end());
+    maxz_ = max = *max_element(zlist.begin(), zlist.end());
+    zsize_ = max - min;
+    zcenter_ = (min + max) / 2;
 
-    m_diameter = sqrt(m_xsize * m_xsize + m_ysize * m_ysize + m_zsize * m_zsize);
+    diameter_ = sqrt(xsize_ * xsize_ + ysize_ * ysize_ + zsize_ * zsize_);
 
-    cout << "xsize: " << m_xsize << endl
-         << "ysize: " << m_ysize << endl
-         << "zsize: " << m_zsize << endl;
+    cout << "xsize: " << xsize_ << endl
+         << "ysize: " << ysize_ << endl
+         << "zsize: " << zsize_ << endl;
 }
 
 int Cadmodel::createGLModellist()
@@ -302,11 +302,11 @@ int Cadmodel::createGLModellist()
     glNewList(id, GL_COMPILE);
     glColor3f(1, 0, 0);
     glBegin(GL_TRIANGLES);
-    for(vector<Facet*>::iterator it = m_facets.begin(); it != m_facets.end(); it++) {
+    for(vector<Facet*>::iterator it = facets_.begin(); it != facets_.end(); it++) {
         Facet *facet = *it;
-        Point normal = facet->normal;
+        Point normal = facet->normal_;
         glNormal3f(normal.x, normal.y, normal.z);
-        vector<Point>& points = facet->points;
+        vector<Point>& points = facet->points_;
         for(vector<Point>::iterator pit = points.begin(); pit != points.end(); pit++) {
             Point p = *pit;
             glVertex3f(p.x, p.y, p.z);
@@ -319,71 +319,71 @@ int Cadmodel::createGLModellist()
 
 bool Cadmodel::slice(double height, double pitch, double speed, const wxString& direction, double scale)
 {
-    m_sliced = false;
-    m_height = height;
-    m_pitch = pitch;
-    m_speed = speed;
-    m_direction = direction;
-    m_scale = scale;
+    sliced_ = false;
+    height_ = height;
+    pitch_ = pitch;
+    speed_ = speed;
+    direction_ = direction;
+    scale_ = scale;
 
-    scaleModel(m_scale);
+    scaleModel(scale_);
     calcDimension();
     createLayers();
-    if(!m_layers.empty()) {
-        m_sliced = true;
-        m_currLayer = 0;
+    if(!layers_.empty()) {
+        sliced_ = true;
+        curr_layer_ = 0;
     }
     return true;
 }
 
 void Cadmodel::scaleModel(double scale)
 {
-    clearFacets(m_facets);
-    for(vector<Facet*>::iterator it = m_oldfacets.begin(); it != m_oldfacets.end(); it++) {
+    clearFacets(facets_);
+    for(vector<Facet*>::iterator it = oldfacets_.begin(); it != oldfacets_.end(); it++) {
         Facet *facet = *it;
         Facet *nfacet = new Facet(*facet);
         nfacet->scale(scale);
-        nfacet->changeDirection(m_direction);
-        m_facets.push_back(nfacet);
+        nfacet->changeDirection(direction_);
+        facets_.push_back(nfacet);
     }
 }
 
 void Cadmodel::createLayers()
 {
-    m_layers.clear();
-    double z = m_minz + m_height; 
-    double lastz = m_minz;
+    layers_.clear();
+    double z = minz_ + height_; 
+    double lastz = minz_;
     int count = 0;
-    while(z < m_maxz) {
+    while(z < maxz_) {
         pair<int, Layer> ret = createOnelayer(z); 
         int cod  = ret.first;
         if(cod == LAYER) {
             count++;
-            ret.second.m_id = count;
-            m_layers.push_back(ret.second); 
+            ret.second.id_ = count;
+            layers_.push_back(ret.second); 
             lastz = z;
-            z += m_height;
+            z += height_;
         }else if(cod == ERR) {
             break;
         } else if(cod == REDO) {
-            z = z - m_height * 0.01; 
+            z = z - height_ * 0.01; 
             if(z < lastz) {
                 break;
             }
             cout << "recreate layer\n";
         } else { // NOT_LAYER
             lastz = z;
-            z += m_height;
+            z += height_;
         }
     }
-    cout << "no of layers:" << m_layers.size() << endl;
+    cout << "no of layers:" << layers_.size() << endl;
 }
 
 pair<int, Layer> Cadmodel::createOnelayer(double z)
 {
     pair<int, Layer> ret;
     vector<Line> lines;
-    for(vector<Facet*>::iterator it = m_facets.begin(); it != m_facets.end(); it++) {
+    for(vector<Facet*>::iterator it = facets_.begin(); it != facets_.end(); it++) {
         Facet *facet = *it;
         pair<int, Line> p = facet->intersect(z);
         int code = p.first;
@@ -396,7 +396,7 @@ pair<int, Layer> Cadmodel::createOnelayer(double z)
     } 
     
     if(!lines.empty()) {
-        Layer layer(z, m_pitch);
+        Layer layer(z, pitch_);
         bool ok = layer.setLines(lines);
         if(ok) {
             ret.first = LAYER;
@@ -413,8 +413,8 @@ pair<int, Layer> Cadmodel::createOnelayer(double z)
 
 int Cadmodel::getCurrLayerGLList()
 {
-    if(m_sliced) {
-        return m_layers[m_currLayer].createGLList();
+    if(sliced_) {
+        return layers_[curr_layer_].createGLList();
     } else {
         return 0;
     }
@@ -422,34 +422,34 @@ int Cadmodel::getCurrLayerGLList()
 
 double Cadmodel::getCurrLayerHeight()
 {
-    return m_layers[m_currLayer].m_z;
+    return layers_[curr_layer_].z_;
 }
 
 void Cadmodel::nextLayer()
 {
-    if(m_sliced) {
-        m_currLayer = (m_currLayer + 1) % m_layers.size();
+    if(sliced_) {
+        curr_layer_ = (curr_layer_ + 1) % layers_.size();
     }
 }
 
 void Cadmodel::prevLayer()
 {
-    if(m_sliced) {
-        m_currLayer--;
-        if(m_currLayer < 0) {
-            m_currLayer = m_layers.size() - 1;
+    if(sliced_) {
+        curr_layer_--;
+        if(curr_layer_ < 0) {
+            curr_layer_ = layers_.size() - 1;
         }
     }
 }
 
 int Cadmodel::getNoLayers()
 {
-    return m_layers.size();
+    return layers_.size();
 }
 
 int Cadmodel::getCurrLayerIndex()
 {
-    return m_currLayer;
+    return curr_layer_;
 }
 
 void Cadmodel::save(const wxString& filename)
@@ -458,18 +458,18 @@ void Cadmodel::save(const wxString& filename)
 
     f << "<slice>\n"
       << "  <dimension>\n"
-      << "    <x>" << m_xsize << "</x>\n"
-      << "    <y>" << m_ysize << "</y>\n"
-      << "    <z>" << m_zsize << "</z>\n"
+      << "    <x>" << xsize_ << "</x>\n"
+      << "    <y>" << ysize_ << "</y>\n"
+      << "    <z>" << zsize_ << "</z>\n"
       << "  </dimension>\n"
       << "  <para>\n"
-      << "     <layerheight>" << m_height << "</layerheight>\n"
-      << "     <layerpitch>" << m_pitch << "</layerpitch>\n"
-      << "     <speed>" << m_speed << "</speed>\n"
+      << "     <layerheight>" << height_ << "</layerheight>\n"
+      << "     <layerpitch>" << pitch_ << "</layerpitch>\n"
+      << "     <speed>" << speed_ << "</speed>\n"
       << "  </para>\n"
-      << "  <layers num=\"" << m_layers.size() << "\">\n"; 
+      << "  <layers num=\"" << layers_.size() << "\">\n"; 
     
-    for(vector<Layer>::iterator it = m_layers.begin(); it != m_layers.end(); it++) {
+    for(vector<Layer>::iterator it = layers_.begin(); it != layers_.end(); it++) {
         it->save(f); 
     }
 
@@ -479,45 +479,45 @@ void Cadmodel::save(const wxString& filename)
 
 double Cadmodel::getXsize()
 {
-    return m_xsize;
+    return xsize_;
 }
 
 double Cadmodel::getYsize()
 {
-    return m_ysize;
+    return ysize_;
 }
 
 double Cadmodel::getZsize()
 {
-    return m_zsize;
+    return zsize_;
 }
 
 bool Cadmodel::isLoaded()
 {
-    return m_loaded;
+    return loaded_;
 }
 
 bool Cadmodel::isSliced()
 {
-    return m_sliced;
+    return sliced_;
 }
 
 double Cadmodel::getDiameter()
 {
-    return m_diameter;
+    return diameter_;
 }
 
 double Cadmodel::getXcenter()
 {
-    return m_xcenter;
+    return xcenter_;
 }
 
 double Cadmodel::getYcenter()
 {
-    return m_ycenter;
+    return ycenter_;
 }
 
 double Cadmodel::getZcenter()
 {
-    return m_zcenter;
+    return zcenter_;
 }

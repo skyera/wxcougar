@@ -28,8 +28,8 @@ public:
 private:
     Line intersect_0(double z); 
     //
-    Point normal;
-    std::vector<Point> points;
+    Point normal_;
+    std::vector<Point> points_;
 };
 
 #endif
