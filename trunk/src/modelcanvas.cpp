@@ -138,7 +138,6 @@ void Modelcanvas::OnMouseEvent(wxMouseEvent& event)
     } else {
         dragging = 0;
     }
-   
 }
 
 void Modelcanvas::setupGLContext()

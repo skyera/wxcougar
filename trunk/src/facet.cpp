@@ -110,7 +110,6 @@ void Facet::changeDirection(const wxString& direction)
 pair<int, Line> Facet::intersect(double z)
 {
     pair<int, Line> p;
-
     int c1 = 0;
     int c2 = 0;
     for(vector<Point>::iterator it = points_.begin(); it != points_.end(); it++) {
@@ -127,7 +126,6 @@ pair<int, Line> Facet::intersect(double z)
         return p;
     } 
     
-    //
     vector<Point> pv;
     Point pe;
     int n = 0;
@@ -165,10 +163,10 @@ pair<int, Line> Facet::intersect(double z)
 Line Facet::intersect_0(double z)
 {
     vector<Point> pv;
-    int n = points_.size();
-    wxASSERT(n == 3);
-    for(int i = 0; i < n; i++) {
-        int next = (i + 1) % n;    
+    int num_points = points_.size();
+    wxASSERT(num_points == 3);
+    for(int i = 0; i < num_points; i++) {
+        int next = (i + 1) % num_points;    
         Point p1 = points_[i];
         Point p2 = points_[next];
         if(isIntersect(p1, p2, z)) {

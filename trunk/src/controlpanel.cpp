@@ -68,11 +68,10 @@ wxSizer* ControlPanel::createDimensions()
 wxSizer* ControlPanel::createOneDimension(const wxString& caption, const vector<pair<wxString, wxString> > &items) 
 {
     wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
-    
     wxStaticText *label = new wxStaticText(this, wxID_ANY, caption);
     sizer->Add(label, 0, wxALIGN_CENTER|wxALL, 5);
-    
     wxFlexGridSizer *flex = new wxFlexGridSizer(items.size(), 2, 2, 2);
+    
     vector<pair<wxString, wxString> >::const_iterator it;
     for(it = items.begin(); it != items.end(); it++) {
          wxString label = it->first;
@@ -88,9 +87,6 @@ wxSizer* ControlPanel::createOneDimension(const wxString& caption, const vector<
     flex->AddGrowableCol(1, 1);
     sizer->Add(flex, 0, wxEXPAND);
     return sizer;
-    
-
-    return 0;
 }
 
 void ControlPanel::setDimension(map<wxString, wxString> & dmap)
