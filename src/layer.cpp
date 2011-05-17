@@ -114,7 +114,6 @@ void Layer::moveLines(std::vector<Line>& loop)
             }
         }    
 
-        //
         if(n > 0) {
             loop.insert(loop.end(), loop.begin(), loop.begin() + n);
             loop.erase(loop.begin(), loop.begin() + n);
@@ -347,7 +346,6 @@ bool Layer::isPeak(double y, const Point& point, const vector<Line>& loop)
     } else {
         return false;
     }
-
 }
 
 bool Layer::isIntersect(double y1, double y2, double y)
@@ -370,9 +368,11 @@ void Layer::calcDimension()
             ylist.push_back(lit->point2_.y);
         }
     } 
-
-    miny_ = *min_element(ylist.begin(), ylist.end());
-    maxy_ = *max_element(ylist.begin(), ylist.end());
+    
+    if(!ylist.empty()) {
+        miny_ = *min_element(ylist.begin(), ylist.end());
+        maxy_ = *max_element(ylist.begin(), ylist.end());
+    }
 }
 
 pair<bool, Line> Layer::getOverlapLine(const Line& line, std::vector<Line>& scanline)

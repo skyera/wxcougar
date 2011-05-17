@@ -19,10 +19,10 @@ using namespace std;
 
 namespace cougar
 {
-bool equal(double d1, double d2)
+bool equal(double x, double y)
 {
-    const double LIMIT = 1e-8;
-    double diff = fabs(d1 - d2);
+    static const double LIMIT = 1e-8;
+    double diff = fabs(x - y);
     return diff <= LIMIT;
 }
 

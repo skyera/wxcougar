@@ -169,14 +169,14 @@ Facet* Cadmodel::getOneFacet(wxTextFile& file)
 Point Cadmodel::getNormal(wxTextFile& file)
 {
     wxArrayString tokens = getLine(file);
-    int n = tokens.Count();
-    if(n >= 1 && n <= 2) {
+    int num_tokens = tokens.Count();
+    if(num_tokens >= 1 && num_tokens <= 2) {
         wxString t1 = tokens[0];        
         if(t1 == wxT("endsolid")) {
             loaded_ = true;
             throw EofError();
         }
-    } else if(n == 5) {
+    } else if(num_tokens == 5) {
         wxString t1 = tokens[0];
         wxString t2 = tokens[1];
         
@@ -271,23 +271,28 @@ void Cadmodel::calcDimension()
             zlist.push_back(p.z);
         }
     }
-    double min, max;
-    minx_ = min = *min_element(xlist.begin(), xlist.end());
-    maxx_ = max = *max_element(xlist.begin(), xlist.end());
-    xsize_ = max - min;
-    xcenter_ = (min + max) / 2;
+    double min = 0.0;
+    double max = 0.0;
+    if(!xlist.empty()) {
+        minx_ = min = *min_element(xlist.begin(), xlist.end());
+        maxx_ = max = *max_element(xlist.begin(), xlist.end());
+        xsize_ = max - min;
+        xcenter_ = (min + max) / 2;
+    }
     
-    //
-    miny_ = min = *min_element(ylist.begin(), ylist.end());
-    maxy_ = max = *max_element(ylist.begin(), ylist.end());
-    ysize_ = max - min;
-    ycenter_ = (min + max) / 2;
+    if(!ylist.empty()) {
+        miny_ = min = *min_element(ylist.begin(), ylist.end());
+        maxy_ = max = *max_element(ylist.begin(), ylist.end());
+        ysize_ = max - min;
+        ycenter_ = (min + max) / 2;
+    }
     
-    //
-    minz_ = min = *min_element(zlist.begin(), zlist.end());
-    maxz_ = max = *max_element(zlist.begin(), zlist.end());
-    zsize_ = max - min;
-    zcenter_ = (min + max) / 2;
+    if(!zlist.empty()) {
+        minz_ = min = *min_element(zlist.begin(), zlist.end());
+        maxz_ = max = *max_element(zlist.begin(), zlist.end());
+        zsize_ = max - min;
+        zcenter_ = (min + max) / 2;
+    }
 
     diameter_ = sqrt(xsize_ * xsize_ + ysize_ * ysize_ + zsize_ * zsize_);
 
